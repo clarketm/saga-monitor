@@ -22,8 +22,10 @@ import createSagaMonitor from '../sagaMonitor'
 
 // configuration
 const config = {
-  level: 'warn',
-  effectTrigger: true
+  level: 'log',
+  effectTrigger: true,
+  effectResolve: true,
+  actionDispatch: true
 }
 
 const middleware = [
