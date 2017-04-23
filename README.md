@@ -32,3 +32,6 @@ const middleware = [
     sagaMonitor: createSagaMonitor(config)
   })
 ];
+```
+
+![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output.png)
