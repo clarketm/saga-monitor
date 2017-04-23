@@ -20,15 +20,15 @@ const defaultConfig = {
 import createSagaMonitor from '../sagaMonitor'
 
 
+// configuration
 const config = {
   level: 'warn',
   effectTrigger: true
 }
 
 const middleware = [
-...
+  // create saga middleware w/ sagaMonitor
   createSagaMiddleware({
-    sagaMonitor: createSagaMonitor()
+    sagaMonitor: createSagaMonitor(config)
   })
-...
 ];
