@@ -37,4 +37,4 @@ const middleware = [
 ![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output.png)
 
 ### Credits
-This was adapted from the [sagaMonitor](https://github.com/redux-saga/redux-saga/blob/master/examples/sagaMonitor/index.js) in the [redux-saga](https://github.com/redux-saga/redux-saga) repository
+This was adapted from the [sagaMonitor](https://github.com/redux-saga/redux-saga/blob/master/examples/sagaMonitor/index.js) example in the [redux-saga](https://github.com/redux-saga/redux-saga) repository.
