@@ -1,5 +1,5 @@
 # saga-monitor
-Simple and configurable redux-saga monitor
+Simple, elegant, and configurable redux-saga monitor.
 
 ### Configuration
 ```js
@@ -22,8 +22,10 @@ import createSagaMonitor from '../sagaMonitor'
 
 // configuration
 const config = {
-  level: 'warn',
-  effectTrigger: true
+  level: 'log',
+  effectTrigger: true,
+  effectResolve: true,
+  actionDispatch: true
 }
 
 const middleware = [
@@ -33,5 +35,8 @@ const middleware = [
   })
 ];
 ```
-
+### Console Output
 ![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output.png)
+
+### Credits
+This was adapted from the [sagaMonitor](https://github.com/redux-saga/redux-saga/blob/master/examples/sagaMonitor/index.js) example in the [redux-saga](https://github.com/redux-saga/redux-saga) repository.
