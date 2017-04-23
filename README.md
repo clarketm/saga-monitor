@@ -16,3 +16,19 @@ const defaultConfig = {
 ```
 
 ### Usage
+```js
+import createSagaMonitor from '../sagaMonitor'
+
+
+const config = {
+  level: 'warn',
+  effectTrigger: true
+}
+
+const middleware = [
+...
+  createSagaMiddleware({
+    sagaMonitor: createSagaMonitor()
+  })
+...
+];
