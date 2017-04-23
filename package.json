@@ -1,0 +1,33 @@
+{
+  "name": "saga-monitor",
+  "version": "1.0.0",
+  "description": "Simple and configurable redux-saga monitor",
+  "main": "sagaMonitor.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clarketm/saga-monitor.git"
+  },
+  "keywords": [
+    "redux",
+    "saga",
+    "react"
+  ],
+  "author": "Travis Clarke",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clarketm/saga-monitor/issues"
+  },
+  "homepage": "https://github.com/clarketm/saga-monitor#readme",
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "redux": "^3.6.0",
+    "redux-saga": "^0.14.7"
+  }
+}
