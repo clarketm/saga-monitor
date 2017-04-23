@@ -35,8 +35,11 @@ const middleware = [
   })
 ];
 ```
-### Console Output
-![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output.png)
+![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output1.png)
+
+> Furthermore, run `$$LogSagas()` in the developer console to display a snapshot of all the available sagas.
+
+![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output2.png)
 
 ### Credits
 This was adapted from the [sagaMonitor](https://github.com/redux-saga/redux-saga/blob/master/examples/sagaMonitor/index.js) example in the [redux-saga](https://github.com/redux-saga/redux-saga) repository.
