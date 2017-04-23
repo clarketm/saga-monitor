@@ -35,7 +35,7 @@ const middleware = [
   })
 ];
 ```
-
+### Console Output
 ![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output.png)
 
 ### Credits
