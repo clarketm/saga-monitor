@@ -1,7 +1,7 @@
 {
   "name": "saga-monitor",
   "version": "1.0.0",
-  "description": "Simple and configurable redux-saga monitor",
+  "description": "Simple, elegant, and configurable redux-saga monitor.",
   "main": "sagaMonitor.js",
   "directories": {
     "example": "example"
