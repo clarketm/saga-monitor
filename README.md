@@ -1,5 +1,5 @@
 # saga-monitor
-Simple and configurable redux-saga monitor
+Simple, elegant, and configurable redux-saga monitor.
 
 ### Configuration
 ```js
