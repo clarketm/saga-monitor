@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/clarketm/saga-monitor.git"
+    "url": "git+https://github.com/clarketm/sagamonitor.git"
   },
   "keywords": [
     "redux",
@@ -34,9 +34,9 @@
   "author": "Travis Clarke",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/clarketm/saga-monitor/issues"
+    "url": "https://github.com/clarketm/sagamonitor/issues"
   },
-  "homepage": "https://github.com/clarketm/saga-monitor#readme",
+  "homepage": "https://github.com/clarketm/sagamonitor#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
