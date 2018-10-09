@@ -7,13 +7,13 @@ Simple, elegant, and configurable redux-saga monitor.
 ### yarn
 
 ```bash
-$ yarn add saga-monitor
+$ yarn add @clarketm/saga-monitor
 ```
 
 ### npm
 
 ```bash
-$ npm install saga-monitor --save
+$ npm install @clarketm/saga-monitor --save
 ```
 
 ## Configuration
