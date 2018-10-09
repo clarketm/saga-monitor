@@ -1,4 +1,4 @@
-# saga-monitor
+# Saga Monitor
 
 Simple, elegant, and configurable redux-saga monitor.
 
