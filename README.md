@@ -1,5 +1,10 @@
 # Saga Monitor
 
+[![NPM release](https://img.shields.io/npm/v/@clarketm/saga-monitor.svg)](https://www.npmjs.com/package/@clarketm/super)
+[![Build Status](https://circleci.com/gh/clarketm/saga-monitor.svg?style=shield)](https://circleci.com/gh/clarketm/super)
+[![Downloads](https://img.shields.io/npm/dt/@clarketm/saga-monitor.svg)](https://www.npmjs.com/package/@clarketm/super)
+[![License](https://img.shields.io/npm/l/@clarketm/saga-monitor.svg)](LICENSE.md)
+
 Simple, elegant, and configurable redux-saga monitor.
 
 ## Installation
