@@ -1,13 +1,26 @@
 {
-  "name": "saga-monitor",
+  "name": "sagamonitor",
   "version": "1.0.0",
   "description": "Simple, elegant, and configurable redux-saga monitor.",
-  "main": "sagaMonitor.js",
+  "main": "src/sagamonitor.js",
   "directories": {
     "example": "example"
   },
+  "files": [
+    "dist",
+    "example",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "yarn build:dist",
+    "build:dist": "shx rm -rf ./dist/* ; yarn bundle:dist ; yarn bundle:es ; yarn stats:dist",
+    "stats:dist": "node ./resources/dist-stats.js",
+    "bundle:dist": "rollup -c ./resources/rollup-config.js",
+    "bundle:es": "rollup -c ./resources/rollup-config-es.js",
+    "prettier": "prettier --write './src/*.{js,css,md}'",
+    "prep": "yarn prettier && yarn build",
+    "prepublishOnly": "yarn prep && bash ./resources/publish.sh"
   },
   "repository": {
     "type": "git",
@@ -24,10 +37,38 @@
     "url": "https://github.com/clarketm/saga-monitor/issues"
   },
   "homepage": "https://github.com/clarketm/saga-monitor#readme",
-  "dependencies": {
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "peerDependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "redux": "^3.6.0",
     "redux-saga": "^0.14.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "colors": "^1.3.2",
+    "husky": "^1.1.1",
+    "lint-staged": "^7.3.0",
+    "prettier": "^1.14.3",
+    "rollup": "^0.66.4",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-buble": "^0.19.4",
+    "rollup-plugin-commonjs": "^9.1.8",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-strip-banner": "^0.2.0",
+    "shx": "^0.3.2",
+    "uglify-js": "^3.4.9",
+    "uglify-save-license": "^0.4.1"
   }
 }
