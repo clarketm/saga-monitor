@@ -5,12 +5,119 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { asEffect, is } from 'redux-saga/utils';
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var sym = function sym(id) {
+  return '@@redux-saga/' + id;
+};
+
+var TASK = /*#__PURE__*/sym('TASK');
+var HELPER = /*#__PURE__*/sym('HELPER');
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+function hasOwn(object, property) {
+  return is.notUndef(object) && hasOwnProperty.call(object, property);
+}
+
+var is = {
+  undef: function undef(v) {
+    return v === null || v === undefined;
+  },
+  notUndef: function notUndef(v) {
+    return v !== null && v !== undefined;
+  },
+  func: function func(f) {
+    return typeof f === 'function';
+  },
+  number: function number(n) {
+    return typeof n === 'number';
+  },
+  string: function string(s) {
+    return typeof s === 'string';
+  },
+  array: Array.isArray,
+  object: function object(obj) {
+    return obj && !is.array(obj) && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object';
+  },
+  promise: function promise(p) {
+    return p && is.func(p.then);
+  },
+  iterator: function iterator(it) {
+    return it && is.func(it.next) && is.func(it.throw);
+  },
+  iterable: function iterable(it) {
+    return it && is.func(Symbol) ? is.func(it[Symbol.iterator]) : is.array(it);
+  },
+  task: function task(t) {
+    return t && t[TASK];
+  },
+  observable: function observable(ob) {
+    return ob && is.func(ob.subscribe);
+  },
+  buffer: function buffer(buf) {
+    return buf && is.func(buf.isEmpty) && is.func(buf.take) && is.func(buf.put);
+  },
+  pattern: function pattern(pat) {
+    return pat && (is.string(pat) || (typeof pat === 'undefined' ? 'undefined' : _typeof(pat)) === 'symbol' || is.func(pat) || is.array(pat));
+  },
+  channel: function channel(ch) {
+    return ch && is.func(ch.take) && is.func(ch.close);
+  },
+  helper: function helper(it) {
+    return it && it[HELPER];
+  },
+  stringableFunc: function stringableFunc(f) {
+    return is.func(f) && hasOwn(f, 'toString');
+  }
+};
+
+var IO = /*#__PURE__*/sym('IO');
+var TAKE = 'TAKE';
+var PUT = 'PUT';
+var ALL = 'ALL';
+var RACE = 'RACE';
+var CALL = 'CALL';
+var CPS = 'CPS';
+var FORK = 'FORK';
+var JOIN = 'JOIN';
+var CANCEL$1 = 'CANCEL';
+var SELECT = 'SELECT';
+var ACTION_CHANNEL = 'ACTION_CHANNEL';
+var CANCELLED = 'CANCELLED';
+var FLUSH = 'FLUSH';
+var GET_CONTEXT = 'GET_CONTEXT';
+var SET_CONTEXT = 'SET_CONTEXT';
+
+var createAsEffectType = function createAsEffectType(type) {
+  return function (effect) {
+    return effect && effect[IO] && effect[type];
+  };
+};
+
+var asEffect = {
+  take: /*#__PURE__*/createAsEffectType(TAKE),
+  put: /*#__PURE__*/createAsEffectType(PUT),
+  all: /*#__PURE__*/createAsEffectType(ALL),
+  race: /*#__PURE__*/createAsEffectType(RACE),
+  call: /*#__PURE__*/createAsEffectType(CALL),
+  cps: /*#__PURE__*/createAsEffectType(CPS),
+  fork: /*#__PURE__*/createAsEffectType(FORK),
+  join: /*#__PURE__*/createAsEffectType(JOIN),
+  cancel: /*#__PURE__*/createAsEffectType(CANCEL$1),
+  select: /*#__PURE__*/createAsEffectType(SELECT),
+  actionChannel: /*#__PURE__*/createAsEffectType(ACTION_CHANNEL),
+  cancelled: /*#__PURE__*/createAsEffectType(CANCELLED),
+  flush: /*#__PURE__*/createAsEffectType(FLUSH),
+  getContext: /*#__PURE__*/createAsEffectType(GET_CONTEXT),
+  setContext: /*#__PURE__*/createAsEffectType(SET_CONTEXT)
+};
+
+if (process.env.NODE_ENV !== 'production') ;
 
 const PENDING = "PENDING";
 const RESOLVED = "RESOLVED";
 const REJECTED = "REJECTED";
-const CANCELLED = "CANCELLED";
+const CANCELLED$1 = "CANCELLED";
 const DEFAULT_STYLE = "color: darkgrey";
 const LABEL_STYLE = "font-weight: bold";
 const EFFECT_TYPE_STYLE = "color: lightblue";
@@ -156,7 +263,7 @@ function rejectEffect(effectId, error) {
 function cancelEffect(effectId) {
   const effect = effectsById[effectId];
   computeEffectDur(effect);
-  effect.status = CANCELLED;
+  effect.status = CANCELLED$1;
 }
 
 function setRaceWinner(raceEffectId, result) {
@@ -295,7 +402,7 @@ function getEffectLog(effect) {
 }
 
 function getLogPrefix(type, effect) {
-  const isCancel = effect.status === CANCELLED;
+  const isCancel = effect.status === CANCELLED$1;
   const isError = effect.status === REJECTED;
   const method = isError ? "error" : "log";
   const winnerInd = effect && effect.winner ? isError ? "✘" : "✓" : "";
@@ -344,7 +451,7 @@ function logResult({
     formatter.appendData("→ ⚠", error);
   } else if (status === PENDING) {
     formatter.appendData("⌛");
-  } else if (status === CANCELLED) {
+  } else if (status === CANCELLED$1) {
     formatter.appendData("→ Cancelled!");
   }
 
