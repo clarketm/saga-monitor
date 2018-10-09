@@ -6,10 +6,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.Sagamonitor = {})));
-}(this, (function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('redux-saga/utils')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'redux-saga/utils'], factory) :
+  (factory((global.SagaMonitor = {}),global.ReduxSaga.utils));
+}(this, (function (exports,utils) { 'use strict';
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -45,119 +45,10 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
-  var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-  var sym = function sym(id) {
-    return '@@redux-saga/' + id;
-  };
-
-  var TASK = /*#__PURE__*/sym('TASK');
-  var HELPER = /*#__PURE__*/sym('HELPER');
-
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-  function hasOwn(object, property) {
-    return is.notUndef(object) && hasOwnProperty.call(object, property);
-  }
-
-  var is = {
-    undef: function undef(v) {
-      return v === null || v === undefined;
-    },
-    notUndef: function notUndef(v) {
-      return v !== null && v !== undefined;
-    },
-    func: function func(f) {
-      return typeof f === 'function';
-    },
-    number: function number(n) {
-      return typeof n === 'number';
-    },
-    string: function string(s) {
-      return typeof s === 'string';
-    },
-    array: Array.isArray,
-    object: function object(obj) {
-      return obj && !is.array(obj) && (typeof obj === 'undefined' ? 'undefined' : _typeof$1(obj)) === 'object';
-    },
-    promise: function promise(p) {
-      return p && is.func(p.then);
-    },
-    iterator: function iterator(it) {
-      return it && is.func(it.next) && is.func(it.throw);
-    },
-    iterable: function iterable(it) {
-      return it && is.func(Symbol) ? is.func(it[Symbol.iterator]) : is.array(it);
-    },
-    task: function task(t) {
-      return t && t[TASK];
-    },
-    observable: function observable(ob) {
-      return ob && is.func(ob.subscribe);
-    },
-    buffer: function buffer(buf) {
-      return buf && is.func(buf.isEmpty) && is.func(buf.take) && is.func(buf.put);
-    },
-    pattern: function pattern(pat) {
-      return pat && (is.string(pat) || (typeof pat === 'undefined' ? 'undefined' : _typeof$1(pat)) === 'symbol' || is.func(pat) || is.array(pat));
-    },
-    channel: function channel(ch) {
-      return ch && is.func(ch.take) && is.func(ch.close);
-    },
-    helper: function helper(it) {
-      return it && it[HELPER];
-    },
-    stringableFunc: function stringableFunc(f) {
-      return is.func(f) && hasOwn(f, 'toString');
-    }
-  };
-
-  var IO = /*#__PURE__*/sym('IO');
-  var TAKE = 'TAKE';
-  var PUT = 'PUT';
-  var ALL = 'ALL';
-  var RACE = 'RACE';
-  var CALL = 'CALL';
-  var CPS = 'CPS';
-  var FORK = 'FORK';
-  var JOIN = 'JOIN';
-  var CANCEL$1 = 'CANCEL';
-  var SELECT = 'SELECT';
-  var ACTION_CHANNEL = 'ACTION_CHANNEL';
-  var CANCELLED = 'CANCELLED';
-  var FLUSH = 'FLUSH';
-  var GET_CONTEXT = 'GET_CONTEXT';
-  var SET_CONTEXT = 'SET_CONTEXT';
-
-  var createAsEffectType = function createAsEffectType(type) {
-    return function (effect) {
-      return effect && effect[IO] && effect[type];
-    };
-  };
-
-  var asEffect = {
-    take: /*#__PURE__*/createAsEffectType(TAKE),
-    put: /*#__PURE__*/createAsEffectType(PUT),
-    all: /*#__PURE__*/createAsEffectType(ALL),
-    race: /*#__PURE__*/createAsEffectType(RACE),
-    call: /*#__PURE__*/createAsEffectType(CALL),
-    cps: /*#__PURE__*/createAsEffectType(CPS),
-    fork: /*#__PURE__*/createAsEffectType(FORK),
-    join: /*#__PURE__*/createAsEffectType(JOIN),
-    cancel: /*#__PURE__*/createAsEffectType(CANCEL$1),
-    select: /*#__PURE__*/createAsEffectType(SELECT),
-    actionChannel: /*#__PURE__*/createAsEffectType(ACTION_CHANNEL),
-    cancelled: /*#__PURE__*/createAsEffectType(CANCELLED),
-    flush: /*#__PURE__*/createAsEffectType(FLUSH),
-    getContext: /*#__PURE__*/createAsEffectType(GET_CONTEXT),
-    setContext: /*#__PURE__*/createAsEffectType(SET_CONTEXT)
-  };
-
-  if (process.env.NODE_ENV !== 'production') ;
-
   var PENDING = "PENDING";
   var RESOLVED = "RESOLVED";
   var REJECTED = "REJECTED";
-  var CANCELLED$1 = "CANCELLED";
+  var CANCELLED = "CANCELLED";
   var DEFAULT_STYLE = "color: darkgrey";
   var LABEL_STYLE = "font-weight: bold";
   var EFFECT_TYPE_STYLE = "color: lightblue";
@@ -269,7 +160,7 @@
   function resolveEffect(effectId, result) {
     var effect = effectsById[effectId];
 
-    if (is.task(result)) {
+    if (utils.is.task(result)) {
       result.done.then(function (taskResult) {
         if (result.isCancelled()) {
           cancelEffect(effectId);
@@ -284,7 +175,7 @@
       effect.status = RESOLVED;
       effect.result = result;
 
-      if (effect && asEffect.race(effect.effect)) {
+      if (effect && utils.asEffect.race(effect.effect)) {
         setRaceWinner(effectId, result);
       }
     }
@@ -296,7 +187,7 @@
     effect.status = REJECTED;
     effect.error = error;
 
-    if (effect && asEffect.race(effect.effect)) {
+    if (effect && utils.asEffect.race(effect.effect)) {
       setRaceWinner(effectId, error);
     }
   }
@@ -304,7 +195,7 @@
   function cancelEffect(effectId) {
     var effect = effectsById[effectId];
     computeEffectDur(effect);
-    effect.status = CANCELLED$1;
+    effect.status = CANCELLED;
   }
 
   function setRaceWinner(raceEffectId, result) {
@@ -404,24 +295,24 @@
       log = getLogPrefix("run", effect);
       log.formatter.addCall(data.saga.name, data.args);
       logResult(effect, log.formatter);
-    } else if (data = asEffect.take(effect.effect)) {
+    } else if (data = utils.asEffect.take(effect.effect)) {
       log = getLogPrefix("take", effect);
       log.formatter.addValue(data);
       logResult(effect, log.formatter);
-    } else if (data = asEffect.put(effect.effect)) {
+    } else if (data = utils.asEffect.put(effect.effect)) {
       log = getLogPrefix("put", effect);
       logResult(Object.assign({}, effect, {
         result: data
       }), log.formatter);
-    } else if (data = asEffect.call(effect.effect)) {
+    } else if (data = utils.asEffect.call(effect.effect)) {
       log = getLogPrefix("call", effect);
       log.formatter.addCall(data.fn.name, data.args);
       logResult(effect, log.formatter);
-    } else if (data = asEffect.cps(effect.effect)) {
+    } else if (data = utils.asEffect.cps(effect.effect)) {
       log = getLogPrefix("cps", effect);
       log.formatter.addCall(data.fn.name, data.args);
       logResult(effect, log.formatter);
-    } else if (data = asEffect.fork(effect.effect)) {
+    } else if (data = utils.asEffect.fork(effect.effect)) {
       if (!data.detached) {
         log = getLogPrefix("fork", effect);
       } else {
@@ -430,23 +321,23 @@
 
       log.formatter.addCall(data.fn.name, data.args);
       logResult(effect, log.formatter);
-    } else if (data = asEffect.join(effect.effect)) {
+    } else if (data = utils.asEffect.join(effect.effect)) {
       log = getLogPrefix("join", effect);
       logResult(effect, log.formatter);
-    } else if (data = asEffect.race(effect.effect)) {
+    } else if (data = utils.asEffect.race(effect.effect)) {
       log = getLogPrefix("race", effect);
       logResult(effect, log.formatter, true);
-    } else if (data = asEffect.cancel(effect.effect)) {
+    } else if (data = utils.asEffect.cancel(effect.effect)) {
       log = getLogPrefix("cancel", effect);
       log.formatter.appendData(data.name);
-    } else if (data = asEffect.select(effect.effect)) {
+    } else if (data = utils.asEffect.select(effect.effect)) {
       log = getLogPrefix("select", effect);
       log.formatter.addCall(data.selector.name, data.args);
       logResult(effect, log.formatter);
-    } else if (is.array(effect.effect)) {
+    } else if (utils.is.array(effect.effect)) {
       log = getLogPrefix("parallel", effect);
       logResult(effect, log.formatter, true);
-    } else if (is.iterator(effect.effect)) {
+    } else if (utils.is.iterator(effect.effect)) {
       log = getLogPrefix("", effect);
       log.formatter.addValue(effect.effect.name);
       logResult(effect, log.formatter, true);
@@ -459,7 +350,7 @@
   }
 
   function getLogPrefix(type, effect) {
-    var isCancel = effect.status === CANCELLED$1;
+    var isCancel = effect.status === CANCELLED;
     var isError = effect.status === REJECTED;
     var method = isError ? "error" : "log";
     var winnerInd = effect && effect.winner ? isError ? "✘" : "✓" : "";
@@ -500,7 +391,7 @@
         duration = _ref.duration;
 
     if (status === RESOLVED && !ignoreResult) {
-      if (is.array(result)) {
+      if (utils.is.array(result)) {
         formatter.addValue(" → ");
         formatter.addValue(result);
       } else {
@@ -510,7 +401,7 @@
       formatter.appendData("→ ⚠", error);
     } else if (status === PENDING) {
       formatter.appendData("⌛");
-    } else if (status === CANCELLED$1) {
+    } else if (status === CANCELLED) {
       formatter.appendData("→ Cancelled!");
     }
 

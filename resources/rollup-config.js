@@ -6,7 +6,6 @@ import commonjs from "rollup-plugin-commonjs";
 import json from "rollup-plugin-json";
 import saveLicense from "uglify-save-license";
 import stripBanner from "rollup-plugin-strip-banner";
-import resolve from "rollup-plugin-node-resolve";
 
 const copyright = fs.readFileSync(path.join("resources", "COPYRIGHT"), "utf-8");
 
@@ -16,12 +15,16 @@ const DIST_DIR = path.resolve("dist");
 export default {
   input: path.join(SRC_DIR, "saga-monitor.js"),
   output: {
-    name: "Sagamonitor",
+    name: "SagaMonitor",
     banner: copyright,
     exports: "named",
     file: path.join(DIST_DIR, "saga-monitor.js"),
-    format: "umd"
+    format: "umd",
+    globals: {
+      "redux-saga/utils": "ReduxSaga.utils"
+    }
   },
+  external: ["redux-saga/utils"],
   plugins: [
     json(),
     stripBanner(),
@@ -30,7 +33,6 @@ export default {
       exclude: "**/node_modules/**",
       babelrc: false
     }),
-    resolve(),
     commonjs(),
     {
       name: "uglify",
