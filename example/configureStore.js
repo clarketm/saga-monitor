@@ -1,14 +1,12 @@
-import {applyMiddleware, compose, createStore} from "redux";
+import { applyMiddleware, compose, createStore } from "redux";
 import reducer from "./reducer";
 import createSagaMiddleware from "redux-saga";
-import createSagaMonitor from "../sagaMonitor";
-
+import createSagaMonitor from "sagamonitor";
 
 export default function configureStore(initialState = {}) {
-
   // configuration
   const config = {
-    level: 'warn',
+    level: "warn",
     effectTrigger: true
   };
 
@@ -19,13 +17,7 @@ export default function configureStore(initialState = {}) {
     })
   ];
 
-  const enhancers = [
-    applyMiddleware(...middleware)
-  ];
+  const enhancers = [applyMiddleware(...middleware)];
 
-  return createStore(
-    reducer,
-    initialState,
-    compose(...enhancers)
-  );
-};
+  return createStore(reducer, initialState, compose(...enhancers));
+}

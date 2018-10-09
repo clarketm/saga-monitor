@@ -1,24 +1,23 @@
-import {asEffect, is} from 'redux-saga/utils';
+/**
+ * Copyright (c) 2018, Travis Clarke
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import { asEffect, is } from 'redux-saga/utils';
 
 const PENDING = 'PENDING';
 const RESOLVED = 'RESOLVED';
 const REJECTED = 'REJECTED';
 const CANCELLED = 'CANCELLED';
-
 const DEFAULT_STYLE = 'color: darkgrey';
 const LABEL_STYLE = 'font-weight: bold';
 const EFFECT_TYPE_STYLE = 'color: lightblue';
 const ERROR_STYLE = 'color: red';
 const CANCEL_STYLE = 'color: #ccc';
-
-const IS_BROWSER = (typeof window !== 'undefined' && window.document);
-
-const globalScope = (
-  typeof window.document === 'undefined' && navigator.product === 'ReactNative' ? global
-    : IS_BROWSER ? window
-    : null
-);
-
+const IS_BROWSER = typeof window !== 'undefined' && window.document;
+const globalScope = typeof window.document === 'undefined' && navigator.product === 'ReactNative' ? global : IS_BROWSER ? window : null;
 const defaultConfig = {
   level: 'debug',
   verbose: true,
@@ -41,9 +40,8 @@ function time() {
 let effectsById = {};
 const rootEffects = [];
 
-function createSagaMonitor (options = {}) {
+function createSagaMonitor(options = {}) {
   const config = Object.assign({}, defaultConfig, options);
-
   const {
     level,
     verbose,
@@ -54,23 +52,18 @@ function createSagaMonitor (options = {}) {
     effectCancel,
     actionDispatch
   } = config;
-
-  let styles = [
-    `color: ${color}`,
-    'font-weight: bold'
-  ].join(';');
+  let styles = [`color: ${color}`, 'font-weight: bold'].join(';');
 
   function effectTriggered(desc) {
     if (effectTrigger) {
       console[level]('%c effectTriggered   ', styles, desc);
     }
-    effectsById[desc.effectId] = Object.assign({},
-      desc,
-      {
-        status: PENDING,
-        start: time()
-      }
-    );
+
+    effectsById[desc.effectId] = Object.assign({}, desc, {
+      status: PENDING,
+      start: time()
+    });
+
     if (desc.root) {
       rootEffects.push(desc.effectId);
     }
@@ -80,6 +73,7 @@ function createSagaMonitor (options = {}) {
     if (effectResolve) {
       console[level]('%c effectResolved    ', styles, effectId, result);
     }
+
     resolveEffect(effectId, result);
   }
 
@@ -87,6 +81,7 @@ function createSagaMonitor (options = {}) {
     if (effectReject) {
       console[level]('%c effectRejected    ', styles, effectId, error);
     }
+
     rejectEffect(effectId, error);
   }
 
@@ -94,6 +89,7 @@ function createSagaMonitor (options = {}) {
     if (effectCancel) {
       console[level]('%c effectCancelled   ', styles, effectId);
     }
+
     cancelEffect(effectId);
   }
 
@@ -128,20 +124,18 @@ function resolveEffect(effectId, result) {
   const effect = effectsById[effectId];
 
   if (is.task(result)) {
-    result.done.then(
-      taskResult => {
-        if (result.isCancelled()) {
-          cancelEffect(effectId);
-        } else {
-          resolveEffect(effectId, taskResult);
-        }
-      },
-      taskError => rejectEffect(effectId, taskError)
-    );
+    result.done.then(taskResult => {
+      if (result.isCancelled()) {
+        cancelEffect(effectId);
+      } else {
+        resolveEffect(effectId, taskResult);
+      }
+    }, taskError => rejectEffect(effectId, taskError));
   } else {
     computeEffectDur(effect);
     effect.status = RESOLVED;
     effect.result = result;
+
     if (effect && asEffect.race(effect.effect)) {
       setRaceWinner(effectId, result);
     }
@@ -153,6 +147,7 @@ function rejectEffect(effectId, error) {
   computeEffectDur(effect);
   effect.status = REJECTED;
   effect.error = error;
+
   if (effect && asEffect.race(effect.effect)) {
     setRaceWinner(effectId, error);
   }
@@ -167,8 +162,10 @@ function cancelEffect(effectId) {
 function setRaceWinner(raceEffectId, result) {
   const winnerLabel = Object.keys(result)[0];
   const children = getChildEffects(raceEffectId);
+
   for (var i = 0; i < children.length; i++) {
     const childEffect = effectsById[children[i]];
+
     if (childEffect.label === winnerLabel) {
       childEffect.winner = true;
     }
@@ -176,15 +173,13 @@ function setRaceWinner(raceEffectId, result) {
 }
 
 function getChildEffects(parentEffectId) {
-  return Object.keys(effectsById)
-    .filter(effectId => effectsById[effectId].parentEffectId === parentEffectId)
-    .map(effectId => +effectId);
-}
-
-// Poor man's `console.group` and `console.groupEnd` for Node.
+  return Object.keys(effectsById).filter(effectId => effectsById[effectId].parentEffectId === parentEffectId).map(effectId => +effectId);
+} // Poor man's `console.group` and `console.groupEnd` for Node.
 // Can be overridden by the `console-group` polyfill.
 // The poor man's groups look nice, too, so whether to use
 // the polyfilled methods or the hand-made ones can be made a preference.
+
+
 let groupPrefix = '';
 const GROUP_SHIFT = '   ';
 const GROUP_ARROW = '▼';
@@ -218,7 +213,9 @@ function logEffectTree(effectId) {
   if (!childEffects.length) {
     logSimpleEffect(effect);
   } else {
-    const {formatter} = getEffectLog(effect);
+    const {
+      formatter
+    } = getEffectLog(effect);
     consoleGroup(...formatter.getLog());
     childEffects.forEach(logEffectTree);
     consoleGroupEnd();
@@ -226,11 +223,15 @@ function logEffectTree(effectId) {
 }
 
 function logSimpleEffect(effect) {
-  const {method, formatter} = getEffectLog(effect);
+  const {
+    method,
+    formatter
+  } = getEffectLog(effect);
   console[method](...formatter.getLog());
 }
-
 /* eslint-disable no-cond-assign */
+
+
 function getEffectLog(effect) {
   let data, log;
 
@@ -245,7 +246,9 @@ function getEffectLog(effect) {
     logResult(effect, log.formatter);
   } else if (data = asEffect.put(effect.effect)) {
     log = getLogPrefix('put', effect);
-    logResult(Object.assign({}, effect, {result: data}), log.formatter);
+    logResult(Object.assign({}, effect, {
+      result: data
+    }), log.formatter);
   } else if (data = asEffect.call(effect.effect)) {
     log = getLogPrefix('call', effect);
     log.formatter.addCall(data.fn.name, data.args);
@@ -260,6 +263,7 @@ function getEffectLog(effect) {
     } else {
       log = getLogPrefix('spawn', effect);
     }
+
     log.formatter.addCall(data.fn.name, data.args);
     logResult(effect, log.formatter);
   } else if (data = asEffect.join(effect.effect)) {
@@ -290,34 +294,29 @@ function getEffectLog(effect) {
   return log;
 }
 
-
 function getLogPrefix(type, effect) {
   const isCancel = effect.status === CANCELLED;
   const isError = effect.status === REJECTED;
-
   const method = isError ? 'error' : 'log';
-  const winnerInd = effect && effect.winner
-    ? (isError ? '✘' : '✓')
-    : '';
+  const winnerInd = effect && effect.winner ? isError ? '✘' : '✓' : '';
 
-  const style = s =>
-    isCancel ? CANCEL_STYLE
-      : isError ? ERROR_STYLE
-      : s;
+  const style = s => isCancel ? CANCEL_STYLE : isError ? ERROR_STYLE : s;
 
   const formatter = logFormatter();
 
   if (winnerInd) {
     formatter.add(`%c ${winnerInd}`, style(LABEL_STYLE));
   }
+
   if (effect && effect.label) {
     formatter.add(`%c ${effect.label}: `, style(LABEL_STYLE));
   }
+
   if (type) {
     formatter.add(`%c ${type} `, style(EFFECT_TYPE_STYLE));
   }
-  formatter.add('%c', style(DEFAULT_STYLE));
 
+  formatter.add('%c', style(DEFAULT_STYLE));
   return {
     method,
     formatter
@@ -325,14 +324,15 @@ function getLogPrefix(type, effect) {
 }
 
 function argToString(arg) {
-  return (
-    typeof arg === 'function' ? `${arg.name}`
-      : typeof arg === 'string' ? `'${arg}'`
-      : arg
-  );
+  return typeof arg === 'function' ? `${arg.name}` : typeof arg === 'string' ? `'${arg}'` : arg;
 }
 
-function logResult({status, result, error, duration}, formatter, ignoreResult) {
+function logResult({
+  status,
+  result,
+  error,
+  duration
+}, formatter, ignoreResult) {
   if (status === RESOLVED && !ignoreResult) {
     if (is.array(result)) {
       formatter.addValue(' → ');
@@ -347,18 +347,14 @@ function logResult({status, result, error, duration}, formatter, ignoreResult) {
   } else if (status === CANCELLED) {
     formatter.appendData('→ Cancelled!');
   }
+
   if (status !== PENDING) {
     formatter.appendData(`(${duration.toFixed(2)}ms)`);
   }
 }
 
 function isPrimitive(val) {
-  return typeof val === 'string' ||
-    typeof val === 'number' ||
-    typeof val === 'boolean' ||
-    typeof val === 'symbol' ||
-    val === null ||
-    val === undefined;
+  return typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean' || typeof val === 'symbol' || val === null || val === undefined;
 }
 
 function logFormatter() {
@@ -370,12 +366,17 @@ function logFormatter() {
     if (!IS_BROWSER && typeof msg === 'string') {
       const prevMsg = msg;
       msg = msg.replace(/^%c\s*/, '');
+
       if (msg !== prevMsg) {
         // Remove the first argument which is the CSS style string.
         args.shift();
       }
     }
-    logs.push({msg, args});
+
+    logs.push({
+      msg,
+      args
+    });
   }
 
   function appendData(...data) {
@@ -411,15 +412,21 @@ function logFormatter() {
   function getLog() {
     let msgs = [];
     let msgsArgs = [];
+
     for (var i = 0; i < logs.length; i++) {
       msgs.push(logs[i].msg);
       msgsArgs = msgsArgs.concat(logs[i].args);
     }
+
     return [msgs.join('')].concat(msgsArgs).concat(suffix);
   }
 
   return {
-    add, addValue, addCall, appendData, getLog
+    add,
+    addValue,
+    addCall,
+    appendData,
+    getLog
   };
 }
 
@@ -427,22 +434,21 @@ const logSaga = (...topEffects) => {
   if (!topEffects.length) {
     topEffects = rootEffects;
   }
+
   if (!rootEffects.length) {
     console.log(groupPrefix, 'No effects to log');
   }
+
   console.log('');
-  console.log('Saga monitor:', Date.now(), (new Date()).toISOString());
+  console.log('Saga monitor:', Date.now(), new Date().toISOString());
   logEffects(topEffects);
   console.log('');
-};
+}; // Export the snapshot-logging function to run from the browser console or extensions.
 
-// Export the snapshot-logging function to run from the browser console or extensions.
+
 if (globalScope) {
   globalScope.$$LogSagas = logSaga;
-}
+} // Export the snapshot-logging function for arbitrary use by external code.
 
-// Export the snapshot-logging function for arbitrary use by external code.
-export {logSaga};
-
-// Export the `sagaMonitor` to pass to the middleware.
 export default createSagaMonitor;
+export { logSaga };
