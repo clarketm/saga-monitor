@@ -11,7 +11,41 @@
   (factory((global.Sagamonitor = {})));
 }(this, (function (exports) { 'use strict';
 
-  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+  function _typeof(obj) {
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      _typeof = function (obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
+
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    }
+  }
+
+  function _iterableToArray(iter) {
+    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance");
+  }
+
+  var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
   var sym = function sym(id) {
     return '@@redux-saga/' + id;
@@ -43,7 +77,7 @@
     },
     array: Array.isArray,
     object: function object(obj) {
-      return obj && !is.array(obj) && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object';
+      return obj && !is.array(obj) && (typeof obj === 'undefined' ? 'undefined' : _typeof$1(obj)) === 'object';
     },
     promise: function promise(p) {
       return p && is.func(p.then);
@@ -64,7 +98,7 @@
       return buf && is.func(buf.isEmpty) && is.func(buf.take) && is.func(buf.put);
     },
     pattern: function pattern(pat) {
-      return pat && (is.string(pat) || (typeof pat === 'undefined' ? 'undefined' : _typeof(pat)) === 'symbol' || is.func(pat) || is.array(pat));
+      return pat && (is.string(pat) || (typeof pat === 'undefined' ? 'undefined' : _typeof$1(pat)) === 'symbol' || is.func(pat) || is.array(pat));
     },
     channel: function channel(ch) {
       return ch && is.func(ch.take) && is.func(ch.close);
@@ -120,18 +154,18 @@
 
   if (process.env.NODE_ENV !== 'production') ;
 
-  const PENDING = "PENDING";
-  const RESOLVED = "RESOLVED";
-  const REJECTED = "REJECTED";
-  const CANCELLED$1 = "CANCELLED";
-  const DEFAULT_STYLE = "color: darkgrey";
-  const LABEL_STYLE = "font-weight: bold";
-  const EFFECT_TYPE_STYLE = "color: lightblue";
-  const ERROR_STYLE = "color: red";
-  const CANCEL_STYLE = "color: #ccc";
-  const IS_BROWSER = typeof window !== "undefined" && window.document;
-  const globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
-  const defaultConfig = {
+  var PENDING = "PENDING";
+  var RESOLVED = "RESOLVED";
+  var REJECTED = "REJECTED";
+  var CANCELLED$1 = "CANCELLED";
+  var DEFAULT_STYLE = "color: darkgrey";
+  var LABEL_STYLE = "font-weight: bold";
+  var EFFECT_TYPE_STYLE = "color: lightblue";
+  var ERROR_STYLE = "color: red";
+  var CANCEL_STYLE = "color: #ccc";
+  var IS_BROWSER = typeof window !== "undefined" && window.document;
+  var globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
+  var defaultConfig = {
     level: "debug",
     verbose: true,
     color: "#03A9F4",
@@ -150,22 +184,21 @@
     }
   }
 
-  let effectsById = {};
-  const rootEffects = [];
+  var effectsById = {};
+  var rootEffects = [];
 
-  function createSagaMonitor(options = {}) {
-    const config = Object.assign({}, defaultConfig, options);
-    const {
-      level,
-      verbose,
-      color,
-      effectTrigger,
-      effectResolve,
-      effectReject,
-      effectCancel,
-      actionDispatch
-    } = config;
-    let styles = [`color: ${color}`, "font-weight: bold"].join(";");
+  function createSagaMonitor() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var config = Object.assign({}, defaultConfig, options);
+    var level = config.level,
+        verbose = config.verbose,
+        color = config.color,
+        effectTrigger = config.effectTrigger,
+        effectResolve = config.effectResolve,
+        effectReject = config.effectReject,
+        effectCancel = config.effectCancel,
+        actionDispatch = config.actionDispatch;
+    var styles = ["color: ".concat(color), "font-weight: bold"].join(";");
 
     function effectTriggered(desc) {
       if (effectTrigger) {
@@ -217,16 +250,16 @@
     }
 
     return {
-      effectTriggered,
-      effectResolved,
-      effectRejected,
-      effectCancelled,
-      actionDispatched
+      effectTriggered: effectTriggered,
+      effectResolved: effectResolved,
+      effectRejected: effectRejected,
+      effectCancelled: effectCancelled,
+      actionDispatched: actionDispatched
     };
   }
 
   function computeEffectDur(effect) {
-    const now = time();
+    var now = time();
     Object.assign(effect, {
       end: now,
       duration: now - effect.start
@@ -234,16 +267,18 @@
   }
 
   function resolveEffect(effectId, result) {
-    const effect = effectsById[effectId];
+    var effect = effectsById[effectId];
 
     if (is.task(result)) {
-      result.done.then(taskResult => {
+      result.done.then(function (taskResult) {
         if (result.isCancelled()) {
           cancelEffect(effectId);
         } else {
           resolveEffect(effectId, taskResult);
         }
-      }, taskError => rejectEffect(effectId, taskError));
+      }, function (taskError) {
+        return rejectEffect(effectId, taskError);
+      });
     } else {
       computeEffectDur(effect);
       effect.status = RESOLVED;
@@ -256,7 +291,7 @@
   }
 
   function rejectEffect(effectId, error) {
-    const effect = effectsById[effectId];
+    var effect = effectsById[effectId];
     computeEffectDur(effect);
     effect.status = REJECTED;
     effect.error = error;
@@ -267,17 +302,17 @@
   }
 
   function cancelEffect(effectId) {
-    const effect = effectsById[effectId];
+    var effect = effectsById[effectId];
     computeEffectDur(effect);
     effect.status = CANCELLED$1;
   }
 
   function setRaceWinner(raceEffectId, result) {
-    const winnerLabel = Object.keys(result)[0];
-    const children = getChildEffects(raceEffectId);
+    var winnerLabel = Object.keys(result)[0];
+    var children = getChildEffects(raceEffectId);
 
     for (var i = 0; i < children.length; i++) {
-      const childEffect = effectsById[children[i]];
+      var childEffect = effectsById[children[i]];
 
       if (childEffect.label === winnerLabel) {
         childEffect.winner = true;
@@ -286,23 +321,37 @@
   }
 
   function getChildEffects(parentEffectId) {
-    return Object.keys(effectsById).filter(effectId => effectsById[effectId].parentEffectId === parentEffectId).map(effectId => +effectId);
+    return Object.keys(effectsById).filter(function (effectId) {
+      return effectsById[effectId].parentEffectId === parentEffectId;
+    }).map(function (effectId) {
+      return +effectId;
+    });
   } // Poor man's `console.group` and `console.groupEnd` for Node.
   // Can be overridden by the `console-group` polyfill.
   // The poor man's groups look nice, too, so whether to use
   // the polyfilled methods or the hand-made ones can be made a preference.
 
 
-  let groupPrefix = "";
-  const GROUP_SHIFT = "   ";
-  const GROUP_ARROW = "▼";
+  var groupPrefix = "";
+  var GROUP_SHIFT = "   ";
+  var GROUP_ARROW = "▼";
 
-  function consoleGroup(...args) {
+  function consoleGroup() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
     if (console.group) {
-      console.group(...args);
+      var _console;
+
+      (_console = console).group.apply(_console, args);
     } else {
+      var _console2;
+
       console.log("");
-      console.log(groupPrefix + GROUP_ARROW, ...args);
+
+      (_console2 = console).log.apply(_console2, [groupPrefix + GROUP_ARROW].concat(args));
+
       groupPrefix += GROUP_SHIFT;
     }
   }
@@ -320,33 +369,35 @@
   }
 
   function logEffectTree(effectId) {
-    const effect = effectsById[effectId];
-    const childEffects = getChildEffects(effectId);
+    var effect = effectsById[effectId];
+    var childEffects = getChildEffects(effectId);
 
     if (!childEffects.length) {
       logSimpleEffect(effect);
     } else {
-      const {
-        formatter
-      } = getEffectLog(effect);
-      consoleGroup(...formatter.getLog());
+      var _getEffectLog = getEffectLog(effect),
+          formatter = _getEffectLog.formatter;
+
+      consoleGroup.apply(void 0, _toConsumableArray(formatter.getLog()));
       childEffects.forEach(logEffectTree);
       consoleGroupEnd();
     }
   }
 
   function logSimpleEffect(effect) {
-    const {
-      method,
-      formatter
-    } = getEffectLog(effect);
-    console[method](...formatter.getLog());
+    var _console3;
+
+    var _getEffectLog2 = getEffectLog(effect),
+        method = _getEffectLog2.method,
+        formatter = _getEffectLog2.formatter;
+
+    (_console3 = console)[method].apply(_console3, _toConsumableArray(formatter.getLog()));
   }
   /* eslint-disable no-cond-assign */
 
 
   function getEffectLog(effect) {
-    let data, log;
+    var data, log;
 
     if (effect.root) {
       data = effect.effect;
@@ -408,44 +459,46 @@
   }
 
   function getLogPrefix(type, effect) {
-    const isCancel = effect.status === CANCELLED$1;
-    const isError = effect.status === REJECTED;
-    const method = isError ? "error" : "log";
-    const winnerInd = effect && effect.winner ? isError ? "✘" : "✓" : "";
+    var isCancel = effect.status === CANCELLED$1;
+    var isError = effect.status === REJECTED;
+    var method = isError ? "error" : "log";
+    var winnerInd = effect && effect.winner ? isError ? "✘" : "✓" : "";
 
-    const style = s => isCancel ? CANCEL_STYLE : isError ? ERROR_STYLE : s;
+    var style = function style(s) {
+      return isCancel ? CANCEL_STYLE : isError ? ERROR_STYLE : s;
+    };
 
-    const formatter = logFormatter();
+    var formatter = logFormatter();
 
     if (winnerInd) {
-      formatter.add(`%c ${winnerInd}`, style(LABEL_STYLE));
+      formatter.add("%c ".concat(winnerInd), style(LABEL_STYLE));
     }
 
     if (effect && effect.label) {
-      formatter.add(`%c ${effect.label}: `, style(LABEL_STYLE));
+      formatter.add("%c ".concat(effect.label, ": "), style(LABEL_STYLE));
     }
 
     if (type) {
-      formatter.add(`%c ${type} `, style(EFFECT_TYPE_STYLE));
+      formatter.add("%c ".concat(type, " "), style(EFFECT_TYPE_STYLE));
     }
 
     formatter.add("%c", style(DEFAULT_STYLE));
     return {
-      method,
-      formatter
+      method: method,
+      formatter: formatter
     };
   }
 
   function argToString(arg) {
-    return typeof arg === "function" ? `${arg.name}` : typeof arg === "string" ? `'${arg}'` : arg;
+    return typeof arg === "function" ? "".concat(arg.name) : typeof arg === "string" ? "'".concat(arg, "'") : arg;
   }
 
-  function logResult({
-    status,
-    result,
-    error,
-    duration
-  }, formatter, ignoreResult) {
+  function logResult(_ref, formatter, ignoreResult) {
+    var status = _ref.status,
+        result = _ref.result,
+        error = _ref.error,
+        duration = _ref.duration;
+
     if (status === RESOLVED && !ignoreResult) {
       if (is.array(result)) {
         formatter.addValue(" → ");
@@ -462,22 +515,26 @@
     }
 
     if (status !== PENDING) {
-      formatter.appendData(`(${duration.toFixed(2)}ms)`);
+      formatter.appendData("(".concat(duration.toFixed(2), "ms)"));
     }
   }
 
   function isPrimitive(val) {
-    return typeof val === "string" || typeof val === "number" || typeof val === "boolean" || typeof val === "symbol" || val === null || val === undefined;
+    return typeof val === "string" || typeof val === "number" || typeof val === "boolean" || _typeof(val) === "symbol" || val === null || val === undefined;
   }
 
   function logFormatter() {
-    const logs = [];
-    let suffix = [];
+    var logs = [];
+    var suffix = [];
 
-    function add(msg, ...args) {
+    function add(msg) {
+      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
+
       // Remove the `%c` CSS styling that is not supported by the Node console.
       if (!IS_BROWSER && typeof msg === "string") {
-        const prevMsg = msg;
+        var prevMsg = msg;
         msg = msg.replace(/^%c\s*/, "");
 
         if (msg !== prevMsg) {
@@ -487,12 +544,16 @@
       }
 
       logs.push({
-        msg,
-        args
+        msg: msg,
+        args: args
       });
     }
 
-    function appendData(...data) {
+    function appendData() {
+      for (var _len3 = arguments.length, data = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        data[_key3] = arguments[_key3];
+      }
+
       suffix = suffix.concat(data);
     }
 
@@ -511,11 +572,11 @@
 
     function addCall(name, args) {
       if (!args.length) {
-        add(`${name}()`);
+        add("".concat(name, "()"));
       } else {
         add(name);
         add("(");
-        args.forEach((arg, i) => {
+        args.forEach(function (arg, i) {
           addValue(argToString(arg));
           addValue(i === args.length - 1 ? ")" : ", ");
         });
@@ -523,8 +584,8 @@
     }
 
     function getLog() {
-      let msgs = [];
-      let msgsArgs = [];
+      var msgs = [];
+      var msgsArgs = [];
 
       for (var i = 0; i < logs.length; i++) {
         msgs.push(logs[i].msg);
@@ -535,15 +596,19 @@
     }
 
     return {
-      add,
-      addValue,
-      addCall,
-      appendData,
-      getLog
+      add: add,
+      addValue: addValue,
+      addCall: addCall,
+      appendData: appendData,
+      getLog: getLog
     };
   }
 
-  const logSaga = (...topEffects) => {
+  var logSaga = function logSaga() {
+    for (var _len4 = arguments.length, topEffects = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      topEffects[_key4] = arguments[_key4];
+    }
+
     if (!topEffects.length) {
       topEffects = rootEffects;
     }

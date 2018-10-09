@@ -8,17 +8,23 @@ Simple, elegant, and configurable redux-saga monitor.
 
 ## Installation
 
-### yarn
+### Yarn
 
 ```bash
 $ yarn add @clarketm/saga-monitor
 ```
 
-### npm
+### NPM
 
 ```bash
 $ npm install @clarketm/saga-monitor --save
 ```
+
+### CDN
+
+|                                `.es.js`                                |                                `.js`                                |                                `.min.js`                                |
+| :--------------------------------------------------------------------: | :-----------------------------------------------------------------: | :---------------------------------------------------------------------: |
+| [🔗](https://unpkg.com/@clarketm/saga-monitor/dist/saga-monitor.es.js) | [🔗](https://unpkg.com/@clarketm/saga-monitor/dist/saga-monitor.js) | [🔗](https://unpkg.com/@clarketm/saga-monitor/dist/saga-monitor.min.js) |
 
 ## Configuration
 

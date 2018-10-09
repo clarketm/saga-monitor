@@ -23,6 +23,7 @@ export default {
     json(),
     stripBanner(),
     babel({
+      presets: ["@babel/preset-env"],
       exclude: "**/node_modules/**",
       babelrc: false
     }),
