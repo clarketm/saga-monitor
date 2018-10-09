@@ -10,7 +10,7 @@ Simple, elegant, and configurable redux-saga monitor.
 $ yarn add sagamonitor
 ```
 
-### ppm
+### npm
 
 ```bash
 $ npm install sagamonitor --save
