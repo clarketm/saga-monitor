@@ -11,21 +11,21 @@
   (factory((global.Sagamonitor = {}),global.utils));
 }(this, (function (exports,utils) { 'use strict';
 
-  const PENDING = 'PENDING';
-  const RESOLVED = 'RESOLVED';
-  const REJECTED = 'REJECTED';
-  const CANCELLED = 'CANCELLED';
-  const DEFAULT_STYLE = 'color: darkgrey';
-  const LABEL_STYLE = 'font-weight: bold';
-  const EFFECT_TYPE_STYLE = 'color: lightblue';
-  const ERROR_STYLE = 'color: red';
-  const CANCEL_STYLE = 'color: #ccc';
-  const IS_BROWSER = typeof window !== 'undefined' && window.document;
-  const globalScope = typeof window.document === 'undefined' && navigator.product === 'ReactNative' ? global : IS_BROWSER ? window : null;
+  const PENDING = "PENDING";
+  const RESOLVED = "RESOLVED";
+  const REJECTED = "REJECTED";
+  const CANCELLED = "CANCELLED";
+  const DEFAULT_STYLE = "color: darkgrey";
+  const LABEL_STYLE = "font-weight: bold";
+  const EFFECT_TYPE_STYLE = "color: lightblue";
+  const ERROR_STYLE = "color: red";
+  const CANCEL_STYLE = "color: #ccc";
+  const IS_BROWSER = typeof window !== "undefined" && window.document;
+  const globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
   const defaultConfig = {
-    level: 'debug',
+    level: "debug",
     verbose: true,
-    color: '#03A9F4',
+    color: "#03A9F4",
     effectTrigger: false,
     effectResolve: false,
     effectReject: false,
@@ -34,7 +34,7 @@
   };
 
   function time() {
-    if (typeof performance !== 'undefined' && performance.now) {
+    if (typeof performance !== "undefined" && performance.now) {
       return performance.now();
     } else {
       return Date.now();
@@ -56,11 +56,11 @@
       effectCancel,
       actionDispatch
     } = config;
-    let styles = [`color: ${color}`, 'font-weight: bold'].join(';');
+    let styles = [`color: ${color}`, "font-weight: bold"].join(";");
 
     function effectTriggered(desc) {
       if (effectTrigger) {
-        console[level]('%c effectTriggered   ', styles, desc);
+        console[level]("%c effectTriggered   ", styles, desc);
       }
 
       effectsById[desc.effectId] = Object.assign({}, desc, {
@@ -75,7 +75,7 @@
 
     function effectResolved(effectId, result) {
       if (effectResolve) {
-        console[level]('%c effectResolved    ', styles, effectId, result);
+        console[level]("%c effectResolved    ", styles, effectId, result);
       }
 
       resolveEffect(effectId, result);
@@ -83,7 +83,7 @@
 
     function effectRejected(effectId, error) {
       if (effectReject) {
-        console[level]('%c effectRejected    ', styles, effectId, error);
+        console[level]("%c effectRejected    ", styles, effectId, error);
       }
 
       rejectEffect(effectId, error);
@@ -91,7 +91,7 @@
 
     function effectCancelled(effectId) {
       if (effectCancel) {
-        console[level]('%c effectCancelled   ', styles, effectId);
+        console[level]("%c effectCancelled   ", styles, effectId);
       }
 
       cancelEffect(effectId);
@@ -99,12 +99,12 @@
 
     function actionDispatched(action) {
       if (actionDispatch) {
-        console[level]('%c actionDispatched  ', styles, action);
+        console[level]("%c actionDispatched  ", styles, action);
       }
     }
 
     if (verbose) {
-      console[level]('View Sagas by executing %c $$LogSagas()', styles, 'in the console');
+      console[level]("View Sagas by executing %c $$LogSagas()", styles, "in the console");
     }
 
     return {
@@ -184,15 +184,15 @@
   // the polyfilled methods or the hand-made ones can be made a preference.
 
 
-  let groupPrefix = '';
-  const GROUP_SHIFT = '   ';
-  const GROUP_ARROW = '▼';
+  let groupPrefix = "";
+  const GROUP_SHIFT = "   ";
+  const GROUP_ARROW = "▼";
 
   function consoleGroup(...args) {
     if (console.group) {
       console.group(...args);
     } else {
-      console.log('');
+      console.log("");
       console.log(groupPrefix + GROUP_ARROW, ...args);
       groupPrefix += GROUP_SHIFT;
     }
@@ -241,57 +241,57 @@
 
     if (effect.root) {
       data = effect.effect;
-      log = getLogPrefix('run', effect);
+      log = getLogPrefix("run", effect);
       log.formatter.addCall(data.saga.name, data.args);
       logResult(effect, log.formatter);
     } else if (data = utils.asEffect.take(effect.effect)) {
-      log = getLogPrefix('take', effect);
+      log = getLogPrefix("take", effect);
       log.formatter.addValue(data);
       logResult(effect, log.formatter);
     } else if (data = utils.asEffect.put(effect.effect)) {
-      log = getLogPrefix('put', effect);
+      log = getLogPrefix("put", effect);
       logResult(Object.assign({}, effect, {
         result: data
       }), log.formatter);
     } else if (data = utils.asEffect.call(effect.effect)) {
-      log = getLogPrefix('call', effect);
+      log = getLogPrefix("call", effect);
       log.formatter.addCall(data.fn.name, data.args);
       logResult(effect, log.formatter);
     } else if (data = utils.asEffect.cps(effect.effect)) {
-      log = getLogPrefix('cps', effect);
+      log = getLogPrefix("cps", effect);
       log.formatter.addCall(data.fn.name, data.args);
       logResult(effect, log.formatter);
     } else if (data = utils.asEffect.fork(effect.effect)) {
       if (!data.detached) {
-        log = getLogPrefix('fork', effect);
+        log = getLogPrefix("fork", effect);
       } else {
-        log = getLogPrefix('spawn', effect);
+        log = getLogPrefix("spawn", effect);
       }
 
       log.formatter.addCall(data.fn.name, data.args);
       logResult(effect, log.formatter);
     } else if (data = utils.asEffect.join(effect.effect)) {
-      log = getLogPrefix('join', effect);
+      log = getLogPrefix("join", effect);
       logResult(effect, log.formatter);
     } else if (data = utils.asEffect.race(effect.effect)) {
-      log = getLogPrefix('race', effect);
+      log = getLogPrefix("race", effect);
       logResult(effect, log.formatter, true);
     } else if (data = utils.asEffect.cancel(effect.effect)) {
-      log = getLogPrefix('cancel', effect);
+      log = getLogPrefix("cancel", effect);
       log.formatter.appendData(data.name);
     } else if (data = utils.asEffect.select(effect.effect)) {
-      log = getLogPrefix('select', effect);
+      log = getLogPrefix("select", effect);
       log.formatter.addCall(data.selector.name, data.args);
       logResult(effect, log.formatter);
     } else if (utils.is.array(effect.effect)) {
-      log = getLogPrefix('parallel', effect);
+      log = getLogPrefix("parallel", effect);
       logResult(effect, log.formatter, true);
     } else if (utils.is.iterator(effect.effect)) {
-      log = getLogPrefix('', effect);
+      log = getLogPrefix("", effect);
       log.formatter.addValue(effect.effect.name);
       logResult(effect, log.formatter, true);
     } else {
-      log = getLogPrefix('unkown', effect);
+      log = getLogPrefix("unkown", effect);
       logResult(effect, log.formatter);
     }
 
@@ -301,8 +301,8 @@
   function getLogPrefix(type, effect) {
     const isCancel = effect.status === CANCELLED;
     const isError = effect.status === REJECTED;
-    const method = isError ? 'error' : 'log';
-    const winnerInd = effect && effect.winner ? isError ? '✘' : '✓' : '';
+    const method = isError ? "error" : "log";
+    const winnerInd = effect && effect.winner ? isError ? "✘" : "✓" : "";
 
     const style = s => isCancel ? CANCEL_STYLE : isError ? ERROR_STYLE : s;
 
@@ -320,7 +320,7 @@
       formatter.add(`%c ${type} `, style(EFFECT_TYPE_STYLE));
     }
 
-    formatter.add('%c', style(DEFAULT_STYLE));
+    formatter.add("%c", style(DEFAULT_STYLE));
     return {
       method,
       formatter
@@ -328,7 +328,7 @@
   }
 
   function argToString(arg) {
-    return typeof arg === 'function' ? `${arg.name}` : typeof arg === 'string' ? `'${arg}'` : arg;
+    return typeof arg === "function" ? `${arg.name}` : typeof arg === "string" ? `'${arg}'` : arg;
   }
 
   function logResult({
@@ -339,17 +339,17 @@
   }, formatter, ignoreResult) {
     if (status === RESOLVED && !ignoreResult) {
       if (utils.is.array(result)) {
-        formatter.addValue(' → ');
+        formatter.addValue(" → ");
         formatter.addValue(result);
       } else {
-        formatter.appendData('→', result);
+        formatter.appendData("→", result);
       }
     } else if (status === REJECTED) {
-      formatter.appendData('→ ⚠', error);
+      formatter.appendData("→ ⚠", error);
     } else if (status === PENDING) {
-      formatter.appendData('⌛');
+      formatter.appendData("⌛");
     } else if (status === CANCELLED) {
-      formatter.appendData('→ Cancelled!');
+      formatter.appendData("→ Cancelled!");
     }
 
     if (status !== PENDING) {
@@ -358,7 +358,7 @@
   }
 
   function isPrimitive(val) {
-    return typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean' || typeof val === 'symbol' || val === null || val === undefined;
+    return typeof val === "string" || typeof val === "number" || typeof val === "boolean" || typeof val === "symbol" || val === null || val === undefined;
   }
 
   function logFormatter() {
@@ -367,9 +367,9 @@
 
     function add(msg, ...args) {
       // Remove the `%c` CSS styling that is not supported by the Node console.
-      if (!IS_BROWSER && typeof msg === 'string') {
+      if (!IS_BROWSER && typeof msg === "string") {
         const prevMsg = msg;
-        msg = msg.replace(/^%c\s*/, '');
+        msg = msg.replace(/^%c\s*/, "");
 
         if (msg !== prevMsg) {
           // Remove the first argument which is the CSS style string.
@@ -393,9 +393,9 @@
       } else {
         // The browser console supports `%O`, the Node console does not.
         if (IS_BROWSER) {
-          add('%O', value);
+          add("%O", value);
         } else {
-          add('%s', require('util').inspect(value));
+          add("%s", require("util").inspect(value));
         }
       }
     }
@@ -405,10 +405,10 @@
         add(`${name}()`);
       } else {
         add(name);
-        add('(');
+        add("(");
         args.forEach((arg, i) => {
           addValue(argToString(arg));
-          addValue(i === args.length - 1 ? ')' : ', ');
+          addValue(i === args.length - 1 ? ")" : ", ");
         });
       }
     }
@@ -422,7 +422,7 @@
         msgsArgs = msgsArgs.concat(logs[i].args);
       }
 
-      return [msgs.join('')].concat(msgsArgs).concat(suffix);
+      return [msgs.join("")].concat(msgsArgs).concat(suffix);
     }
 
     return {
@@ -440,13 +440,13 @@
     }
 
     if (!rootEffects.length) {
-      console.log(groupPrefix, 'No effects to log');
+      console.log(groupPrefix, "No effects to log");
     }
 
-    console.log('');
-    console.log('Saga monitor:', Date.now(), new Date().toISOString());
+    console.log("");
+    console.log("Saga monitor:", Date.now(), new Date().toISOString());
     logEffects(topEffects);
-    console.log('');
+    console.log("");
   }; // Export the snapshot-logging function to run from the browser console or extensions.
 
 

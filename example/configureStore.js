@@ -1,7 +1,7 @@
 import { applyMiddleware, compose, createStore } from "redux";
 import reducer from "./reducer";
 import createSagaMiddleware from "redux-saga";
-import createSagaMonitor from "sagamonitor";
+import createSagaMonitor from "@clarketm/saga-monitor";
 
 export default function configureStore(initialState = {}) {
   // configuration

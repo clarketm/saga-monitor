@@ -20,12 +20,12 @@ const diff = (n, o) => {
 const pct = (s, b) => ` ${Math.floor(10000 * (1 - s / b)) / 100}%`.grey;
 
 Promise.all([
-  execp("cat dist/sagamonitor.js | wc -c"),
-  execp("git show master:dist/sagamonitor.js | wc -c"),
-  execp("cat dist/sagamonitor.min.js | wc -c"),
-  execp("git show master:dist/sagamonitor.min.js | wc -c"),
-  execp("cat dist/sagamonitor.min.js | gzip -c | wc -c"),
-  execp("git show master:dist/sagamonitor.min.js | gzip -c | wc -c")
+  execp("cat dist/saga-monitor.js | wc -c"),
+  execp("git show master:dist/saga-monitor.js | wc -c"),
+  execp("cat dist/saga-monitor.min.js | wc -c"),
+  execp("git show master:dist/saga-monitor.min.js | wc -c"),
+  execp("cat dist/saga-monitor.min.js | gzip -c | wc -c"),
+  execp("git show master:dist/saga-monitor.min.js | gzip -c | wc -c")
 ])
   .then(results => results.map(result => parseInt(result, 10)))
   .then(([rawNew, rawOld, minNew, minOld, zipNew, zipOld]) => {

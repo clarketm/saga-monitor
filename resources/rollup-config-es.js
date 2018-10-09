@@ -12,11 +12,11 @@ const SRC_DIR = path.resolve("src");
 const DIST_DIR = path.resolve("dist");
 
 export default {
-  input: path.join(SRC_DIR, "sagamonitor.js"),
+  input: path.join(SRC_DIR, "saga-monitor.js"),
   output: {
     name: "Sagamonitor",
     banner: copyright,
-    file: path.join(DIST_DIR, "sagamonitor.es.js"),
+    file: path.join(DIST_DIR, "saga-monitor.es.js"),
     format: "es"
   },
   plugins: [
