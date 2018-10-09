@@ -1,0 +1,30 @@
+# Javascript Node CircleCI 2.0 configuration file
+version: 2
+
+jobs:
+  build:
+    docker:
+    - image: circleci/node:10.8
+    - image: redis:4.0
+    - image: mongo:3.6
+#    - image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+
+    environment:
+    - NODE_ENV: development
+
+    steps:
+    - checkout
+
+    - restore_cache:
+        keys:
+        - root-dependencies-{{ checksum "yarn.lock" }}
+
+    - run: yarn --frozen-lockfile
+
+    - save_cache:
+        paths:
+        - node_modules
+        key: root-dependencies-{{ checksum "yarn.lock" }}
+
+    - run: yarn test
+#    - run: bash ./push.sh
