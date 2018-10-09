@@ -2,7 +2,21 @@
 
 Simple, elegant, and configurable redux-saga monitor.
 
-### Configuration
+## Installation
+
+### yarn
+
+```bash
+$ yarn add sagamonitor
+```
+
+### ppm
+
+```bash
+$ npm install sagamonitor --save
+```
+
+## Configuration
 
 ```js
 const defaultConfig = {
@@ -17,10 +31,10 @@ const defaultConfig = {
 };
 ```
 
-### Usage
+## Usage
 
 ```js
-import createSagaMonitor from "../sagaMonitor";
+import createSagaMonitor from "sagamonitor";
 
 // configuration
 const config = {
@@ -44,7 +58,7 @@ const middleware = [
 
 ![console output](https://github.com/clarketm/saga-monitor/blob/master/console-output2.png)
 
-### Credits
+## Credits
 
 This was adapted from the [sagaMonitor](https://github.com/redux-saga/redux-saga/blob/master/examples/sagaMonitor/index.js) example in the [redux-saga](https://github.com/redux-saga/redux-saga) repository.
 
