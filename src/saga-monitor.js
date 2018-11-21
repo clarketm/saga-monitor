@@ -1,4 +1,5 @@
 import { asEffect, is } from "redux-saga/utils";
+import { version } from "../package.json";
 
 const PENDING = "PENDING";
 const RESOLVED = "RESOLVED";
@@ -426,6 +427,10 @@ const logSaga = (...topEffects) => {
   logEffects(topEffects);
   console.log("");
 };
+
+// Version
+createSagaMonitor.VERSION = version;
+logSaga.VERSION = version;
 
 // Export the snapshot-logging function to run from the browser console or extensions.
 if (globalScope) {

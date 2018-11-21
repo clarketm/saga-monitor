@@ -45,6 +45,8 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
+  var version = "1.0.8";
+
   var PENDING = "PENDING";
   var RESOLVED = "RESOLVED";
   var REJECTED = "REJECTED";
@@ -461,11 +463,11 @@
       }
     }
 
-    function addCall(name, args) {
+    function addCall(name$$1, args) {
       if (!args.length) {
-        add("".concat(name, "()"));
+        add("".concat(name$$1, "()"));
       } else {
-        add(name);
+        add(name$$1);
         add("(");
         args.forEach(function (arg, i) {
           addValue(argToString(arg));
@@ -512,8 +514,11 @@
     console.log("Saga monitor:", Date.now(), new Date().toISOString());
     logEffects(topEffects);
     console.log("");
-  }; // Export the snapshot-logging function to run from the browser console or extensions.
+  }; // Version
 
+
+  createSagaMonitor.VERSION = version;
+  logSaga.VERSION = version; // Export the snapshot-logging function to run from the browser console or extensions.
 
   if (globalScope) {
     globalScope.$$LogSagas = logSaga;
