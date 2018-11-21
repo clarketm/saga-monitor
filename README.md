@@ -62,11 +62,11 @@ const middleware = [
 ];
 ```
 
-![console output](https://github.com/clarketm/saga-monitor/blob/master/resources/console-output1.png)
+![console output](https://raw.githubusercontent.com/clarketm/saga-monitor/master/resources/console-output1.png)
 
 > Run `$$LogSagas()` in the developer console to display a snapshot of all the available sagas.
 
-![console output](https://github.com/clarketm/saga-monitor/blob/master/resources/console-output2.png)
+![console output](https://raw.githubusercontent.com/clarketm/saga-monitor/master/resources/console-output2.png)
 
 ## Credits
 
