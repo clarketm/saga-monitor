@@ -1,6 +1,6 @@
 {
   "name": "@clarketm/saga-monitor",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Simple, elegant, and configurable redux-saga monitor.",
   "main": "dist/saga-monitor.js",
   "module": "dist/saga-monitor.es.js",
