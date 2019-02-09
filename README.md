@@ -1,5 +1,5 @@
 # `Compatibility Notice`
-If you're using Redux-Saga >=1.0.0, until the updates to this module can be made we recommend using the [sagaMonitor](https://github.com/redux-saga/redux-saga/tree/master/examples/sagaMonitor) provided by the Redux-Saga team. 
+If you're using Redux-Saga >=1.0.0 until the updates to this module can be made we recommend using the [sagaMonitor](https://github.com/redux-saga/redux-saga/tree/master/examples/sagaMonitor) provided by the Redux-Saga team. 
 > **Note:** currently, this module will only work for projects using Redux-Saga >=0.14.7 <1.0.0
 
 # Saga Monitor
