@@ -41,7 +41,7 @@ function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance");
 }
 
-var version = "1.0.8";
+var version = "1.0.9";
 
 var PENDING = "PENDING";
 var RESOLVED = "RESOLVED";

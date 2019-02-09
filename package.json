@@ -1,6 +1,6 @@
 {
   "name": "@clarketm/saga-monitor",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Simple, elegant, and configurable redux-saga monitor.",
   "main": "dist/saga-monitor.js",
   "module": "dist/saga-monitor.es.js",
@@ -59,7 +59,7 @@
     ]
   },
   "peerDependencies": {
-    "redux-saga": ">=0.14.7"
+    "redux-saga": ">=0.14.7 <1"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
