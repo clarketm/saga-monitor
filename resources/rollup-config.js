@@ -20,12 +20,8 @@ export default {
     banner: copyright,
     exports: "named",
     file: path.join(DIST_DIR, "saga-monitor.js"),
-    format: "umd",
-    globals: {
-      "redux-saga/effects": "ReduxSaga.effects"
-    }
+    format: "umd"
   },
-  external: ["redux-saga/effects"],
   plugins: [
     json(),
     stripBanner(),

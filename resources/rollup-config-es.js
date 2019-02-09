@@ -17,12 +17,8 @@ export default {
     name: "SagaMonitor",
     banner: copyright,
     file: path.join(DIST_DIR, "saga-monitor.es.js"),
-    format: "es",
-    globals: {
-      "redux-saga": "ReduxSaga.effects"
-    }
+    format: "es"
   },
-  external: ["redux-saga/effects"],
   plugins: [
     json(),
     stripBanner(),

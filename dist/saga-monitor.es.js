@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { effectTypes } from 'redux-saga/effects';
-
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
@@ -147,6 +145,10 @@ function _nonIterableSpread() {
 var createSymbol = function createSymbol(name) {
   return "@@redux-saga/" + name;
 };
+
+var CANCEL =
+/*#__PURE__*/
+createSymbol('CANCEL_PROMISE');
 var IO =
 /*#__PURE__*/
 createSymbol('IO');
@@ -154,10 +156,19 @@ var TASK =
 /*#__PURE__*/
 createSymbol('TASK');
 
+var notUndef = function notUndef(v) {
+  return v !== null && v !== undefined;
+};
 var func = function func(f) {
   return typeof f === 'function';
 };
+var string = function string(s) {
+  return typeof s === 'string';
+};
 var array = Array.isArray;
+var object = function object(obj) {
+  return obj && !array(obj) && typeof obj === 'object';
+};
 var promise = function promise(p) {
   return p && func(p.then);
 };
@@ -176,6 +187,268 @@ var RESOLVED = "RESOLVED";
 var REJECTED = "REJECTED";
 var CANCELLED = "CANCELLED";
 var IS_BROWSER = typeof window !== "undefined" && window.document;
+
+function delayP(ms, val) {
+  if (val === void 0) {
+    val = true;
+  }
+
+  var timeoutId;
+  var promise = new Promise(function (resolve) {
+    timeoutId = setTimeout(resolve, ms, val);
+  });
+
+  promise[CANCEL] = function () {
+    clearTimeout(timeoutId);
+  };
+
+  return promise;
+}
+
+var konst = function konst(v) {
+  return function () {
+    return v;
+  };
+};
+var kTrue =
+/*#__PURE__*/
+konst(true);
+var noop = function noop() {};
+function check(value, predicate, error) {
+  if (!predicate(value)) {
+    throw new Error(error);
+  }
+}
+
+var BUFFER_OVERFLOW = "Channel's Buffer overflow!";
+var ON_OVERFLOW_THROW = 1;
+var ON_OVERFLOW_DROP = 2;
+var ON_OVERFLOW_SLIDE = 3;
+var ON_OVERFLOW_EXPAND = 4;
+var zeroBuffer = {
+  isEmpty: kTrue,
+  put: noop,
+  take: noop
+};
+
+function ringBuffer(limit, overflowAction) {
+  if (limit === void 0) {
+    limit = 10;
+  }
+
+  var arr = new Array(limit);
+  var length = 0;
+  var pushIndex = 0;
+  var popIndex = 0;
+
+  var push = function push(it) {
+    arr[pushIndex] = it;
+    pushIndex = (pushIndex + 1) % limit;
+    length++;
+  };
+
+  var take = function take() {
+    if (length != 0) {
+      var it = arr[popIndex];
+      arr[popIndex] = null;
+      length--;
+      popIndex = (popIndex + 1) % limit;
+      return it;
+    }
+  };
+
+  var flush = function flush() {
+    var items = [];
+
+    while (length) {
+      items.push(take());
+    }
+
+    return items;
+  };
+
+  return {
+    isEmpty: function isEmpty() {
+      return length == 0;
+    },
+    put: function put(it) {
+      if (length < limit) {
+        push(it);
+      } else {
+        var doubledLimit;
+
+        switch (overflowAction) {
+          case ON_OVERFLOW_THROW:
+            throw new Error(BUFFER_OVERFLOW);
+
+          case ON_OVERFLOW_SLIDE:
+            arr[pushIndex] = it;
+            pushIndex = (pushIndex + 1) % limit;
+            popIndex = pushIndex;
+            break;
+
+          case ON_OVERFLOW_EXPAND:
+            doubledLimit = 2 * limit;
+            arr = flush();
+            length = arr.length;
+            pushIndex = arr.length;
+            popIndex = 0;
+            arr.length = doubledLimit;
+            limit = doubledLimit;
+            push(it);
+            break;
+
+          default: // DROP
+
+        }
+      }
+    },
+    take: take,
+    flush: flush
+  };
+}
+
+var none = function none() {
+  return zeroBuffer;
+};
+var fixed = function fixed(limit) {
+  return ringBuffer(limit, ON_OVERFLOW_THROW);
+};
+var dropping = function dropping(limit) {
+  return ringBuffer(limit, ON_OVERFLOW_DROP);
+};
+var sliding = function sliding(limit) {
+  return ringBuffer(limit, ON_OVERFLOW_SLIDE);
+};
+var expanding = function expanding(initialSize) {
+  return ringBuffer(initialSize, ON_OVERFLOW_EXPAND);
+};
+
+var buffers = /*#__PURE__*/Object.freeze({
+  none: none,
+  fixed: fixed,
+  dropping: dropping,
+  sliding: sliding,
+  expanding: expanding
+});
+
+var TAKE = 'TAKE';
+var PUT = 'PUT';
+var ALL = 'ALL';
+var RACE = 'RACE';
+var CALL = 'CALL';
+var CPS = 'CPS';
+var FORK = 'FORK';
+var JOIN = 'JOIN';
+var CANCEL$1 = 'CANCEL';
+var SELECT = 'SELECT';
+var ACTION_CHANNEL = 'ACTION_CHANNEL';
+var CANCELLED$1 = 'CANCELLED';
+var FLUSH = 'FLUSH';
+var GET_CONTEXT = 'GET_CONTEXT';
+var SET_CONTEXT = 'SET_CONTEXT';
+
+var effectTypes = /*#__PURE__*/Object.freeze({
+  TAKE: TAKE,
+  PUT: PUT,
+  ALL: ALL,
+  RACE: RACE,
+  CALL: CALL,
+  CPS: CPS,
+  FORK: FORK,
+  JOIN: JOIN,
+  CANCEL: CANCEL$1,
+  SELECT: SELECT,
+  ACTION_CHANNEL: ACTION_CHANNEL,
+  CANCELLED: CANCELLED$1,
+  FLUSH: FLUSH,
+  GET_CONTEXT: GET_CONTEXT,
+  SET_CONTEXT: SET_CONTEXT
+});
+
+var makeEffect = function makeEffect(type, payload) {
+  var _ref;
+
+  return _ref = {}, _ref[IO] = true, _ref.combinator = false, _ref.type = type, _ref.payload = payload, _ref;
+};
+
+var validateFnDescriptor = function validateFnDescriptor(effectName, fnDescriptor) {
+  check(fnDescriptor, notUndef, effectName + ": argument fn is undefined or null");
+
+  if (func(fnDescriptor)) {
+    return;
+  }
+
+  var context = null;
+  var fn;
+
+  if (array(fnDescriptor)) {
+    context = fnDescriptor[0];
+    fn = fnDescriptor[1];
+    check(fn, notUndef, effectName + ": argument of type [context, fn] has undefined or null `fn`");
+  } else if (object(fnDescriptor)) {
+    context = fnDescriptor.context;
+    fn = fnDescriptor.fn;
+    check(fn, notUndef, effectName + ": argument of type {context, fn} has undefined or null `fn`");
+  } else {
+    check(fnDescriptor, func, effectName + ": argument fn is not function");
+    return;
+  }
+
+  if (context && string(fn)) {
+    check(context[fn], func, effectName + ": context arguments has no such method - \"" + fn + "\"");
+    return;
+  }
+
+  check(fn, func, effectName + ": unpacked fn argument (from [context, fn] or {context, fn}) is not a function");
+};
+
+function getFnCallDescriptor(fnDescriptor, args) {
+  var context = null;
+  var fn;
+
+  if (func(fnDescriptor)) {
+    fn = fnDescriptor;
+  } else {
+    if (array(fnDescriptor)) {
+      context = fnDescriptor[0];
+      fn = fnDescriptor[1];
+    } else {
+      context = fnDescriptor.context;
+      fn = fnDescriptor.fn;
+    }
+
+    if (context && string(fn) && func(context[fn])) {
+      fn = context[fn];
+    }
+  }
+
+  return {
+    context: context,
+    fn: fn,
+    args: args
+  };
+}
+
+var isNotDelayEffect = function isNotDelayEffect(fn) {
+  return fn !== delay;
+};
+
+function call(fnDescriptor) {
+  for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    check(fnDescriptor, isNotDelayEffect, "instead of writing `yield call(delay, " + String(args[0]) + ")` where delay is an effect from `redux-saga/effects` you should write `yield delay(" + String(args[0]) + ")`");
+    validateFnDescriptor('call', fnDescriptor);
+  }
+
+  return makeEffect(CALL, getFnCallDescriptor(fnDescriptor, args));
+}
+var delay =
+/*#__PURE__*/
+call.bind(null, delayP);
 
 var isRaceEffect = function isRaceEffect(eff) {
   return effect(eff) && eff.type === effectTypes.RACE;
@@ -726,7 +999,7 @@ function createSagaMonitor() {
 
   function effectTriggered(desc) {
     if (effectTrigger) {
-      console[level]("%c Saga monitor: effectTriggered:", styles, desc);
+      console[level]("%c effectTriggered:", styles, desc);
       manager.set(desc.effectId, Object.assign({}, desc, {
         status: PENDING,
         start: time()

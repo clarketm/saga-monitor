@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import * as is from "@redux-saga/is";
-import { effectTypes } from "redux-saga/effects";
+import { effectTypes } from "@redux-saga/core/effects";
 import { consoleGroup, consoleGroupEnd } from "./consoleGroup";
 import { CANCELLED, REJECTED } from "./constants";
 import DescriptorFormatter from "./DescriptorFormatter";

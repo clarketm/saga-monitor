@@ -123,7 +123,7 @@ function createSagaMonitor(options = {}) {
 
   function effectTriggered(desc) {
     if (effectTrigger) {
-      console[level]("%c Saga monitor: effectTriggered:", styles, desc);
+      console[level]("%c effectTriggered:", styles, desc);
 
       manager.set(
         desc.effectId,

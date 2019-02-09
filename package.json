@@ -84,6 +84,7 @@
     "uglify-save-license": "^0.4.1"
   },
   "dependencies": {
+    "@redux-saga/core": "^1.0.1",
     "@redux-saga/is": "^1.0.1"
   }
 }
