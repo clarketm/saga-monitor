@@ -8,7 +8,7 @@ Simple, elegant, and configurable redux-saga monitor.
 
 ## `Compatibility Notice`
 
-This module is only compatible with Redux-Saga **>=1.0.0**. To support earlier versions of Redux-Saga please use: [v1.0.9](https://github.com/clarketm/saga-monitor/releases/tag/v1.0.9) or earlier.
+This module is only compatible with [Redux-Saga >=1.0.0](https://github.com/redux-saga/redux-saga/releases/tag/v1.0.0). To support earlier versions of Redux-Saga please use: [saga-monitor v1.0.9](https://github.com/clarketm/saga-monitor/releases/tag/v1.0.9) or earlier.
 
 ## Installation
 
