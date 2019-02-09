@@ -4,6 +4,9 @@ import { CANCELLED, IS_BROWSER, PENDING, REJECTED, RESOLVED } from "./modules/co
 import { isRaceEffect } from "./modules/checkers";
 import logSaga from "./modules/logSaga";
 import Manager from "./modules/Manager";
+import { version } from "../package.json";
+
+const LOG_SAGAS_STYLE = "font-weight: bold";
 
 const globalScope =
   typeof window.document === "undefined" && navigator.product === "ReactNative"
@@ -83,6 +86,7 @@ function setRaceWinner(raceEffectId, result) {
 const defaultConfig = {
   level: "debug",
   color: "#03A9F4",
+  verbose: true,
   rootSagaStart: false,
   effectTrigger: false,
   effectResolve: false,
@@ -109,8 +113,9 @@ function createSagaMonitor(options = {}) {
   let styles = [`color: ${color}`, "font-weight: bold"].join(";");
 
   function rootSagaStarted(desc) {
-    if (rootSagaStart)
-      console[level]("%c Root saga started:", desc.saga.name || "anonymous", styles, desc.args);
+    if (rootSagaStart) {
+      console[level]("%c Root saga started:", styles, desc.saga.name || "anonymous", desc.args);
+    }
 
     manager.setRootEffect(
       desc.effectId,
@@ -157,11 +162,17 @@ function createSagaMonitor(options = {}) {
   }
 
   function actionDispatched(action) {
-    if (actionDispatch) console[level]("%c actionDispatched:", styles, action);
+    if (actionDispatch) {
+      console[level]("%c actionDispatched:", styles, action);
+    }
   }
 
-  if (verbose) {
-    console[level]("View Sagas by executing %c $$LogSagas()", styles, "in the console");
+  if (globalScope) {
+    if (verbose) {
+      console[level]("View Sagas by executing %c$$LogSagas()", LOG_SAGAS_STYLE, "in the console");
+    }
+    // Export the snapshot-logging function to run from the browser console or extensions.
+    globalScope.$$LogSagas = () => logSaga(manager, color);
   }
 
   return {
@@ -174,10 +185,9 @@ function createSagaMonitor(options = {}) {
   };
 }
 
-// Export the snapshot-logging function to run from the browser console or extensions.
-if (globalScope) {
-  globalScope.$$LogSagas = () => logSaga(manager);
-}
+// Version
+createSagaMonitor.VERSION = version;
+logSaga.VERSION = version;
 
 // Export the snapshot-logging function for arbitrary use by external code.
 export { logSaga };
