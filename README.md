@@ -1,5 +1,5 @@
 # Deprecation Notice
-If you're on Redux-Saga >=1.0.0 we recommend using the [sagaMonitor](https://github.com/redux-saga/redux-saga/tree/master/examples/sagaMonitor) provided by the Redux-Saga team. 
+If you're using Redux-Saga >=1.0.0 we recommend using the [sagaMonitor](https://github.com/redux-saga/redux-saga/tree/master/examples/sagaMonitor) provided by the Redux-Saga team. 
 > Note: this module will continue to work for projects using Redux-Saga >=0.14.7 <1
 
 # Saga Monitor
