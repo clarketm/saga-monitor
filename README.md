@@ -1,7 +1,3 @@
-# `Deprecation Notice`
-If you're using Redux-Saga >=1.0.0 we recommend using the [sagaMonitor](https://github.com/redux-saga/redux-saga/tree/master/examples/sagaMonitor) provided by the Redux-Saga team. 
-> **Note:** this module will only work for projects using Redux-Saga >=0.14.7 <1.0.0
-
 # Saga Monitor
 
 [![NPM release](https://img.shields.io/npm/v/@clarketm/saga-monitor.svg)](https://www.npmjs.com/package/@clarketm/super)
@@ -9,6 +5,10 @@ If you're using Redux-Saga >=1.0.0 we recommend using the [sagaMonitor](https://
 [![License](https://img.shields.io/npm/l/@clarketm/saga-monitor.svg)](LICENSE.md)
 
 Simple, elegant, and configurable redux-saga monitor.
+
+## `Compatibility Notice`
+
+This module is only compatible with Redux-Saga **>=1.0.0**. To support earlier versions of Redux-Saga please use: [v1.0.9](https://github.com/clarketm/saga-monitor/releases/tag/v1.0.9) or earlier.
 
 ## Installation
 
@@ -37,6 +37,7 @@ const defaultConfig = {
   level: "debug", // logging level
   verbose: true, // verbose mode
   color: "#03A9F4", // default color
+  rootSagaStart: false, // show root saga start effect
   effectTrigger: false, // show triggered effects
   effectResolve: false, // show resolved effects
   effectReject: false, // show rejected effects
