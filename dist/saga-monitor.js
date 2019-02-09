@@ -1003,35 +1003,47 @@
         actionDispatch = config.actionDispatch;
     var styles = ["color: ".concat(color), "font-weight: bold"].join(";");
 
+    function rootSagaStarted(desc) {
+      if (rootSagaStart) console[level]("%c Root saga started:", desc.saga.name || "anonymous", styles, desc.args);
+      manager.setRootEffect(desc.effectId, Object.assign({}, desc, {
+        status: PENDING,
+        start: time()
+      }));
+    }
+
     function effectTriggered(desc) {
       if (effectTrigger) {
         console[level]("%c effectTriggered:", styles, desc);
-        manager.set(desc.effectId, Object.assign({}, desc, {
-          status: PENDING,
-          start: time()
-        }));
       }
+
+      manager.set(desc.effectId, Object.assign({}, desc, {
+        status: PENDING,
+        start: time()
+      }));
     }
 
     function effectResolved(effectId, result) {
       if (effectResolve) {
         console[level]("%c effectResolved:", styles, effectId, result);
-        resolveEffect(effectId, result);
       }
+
+      resolveEffect(effectId, result);
     }
 
     function effectRejected(effectId, error) {
       if (effectReject) {
         console[level]("%c effectRejected:", styles, effectId, error);
-        rejectEffect(effectId, error);
       }
+
+      rejectEffect(effectId, error);
     }
 
     function effectCancelled(effectId) {
       if (effectCancel) {
         console[level]("%c effectCancelled:", styles, effectId);
-        cancelEffect(effectId);
       }
+
+      cancelEffect(effectId);
     }
 
     function actionDispatched(action) {
@@ -1043,6 +1055,7 @@
     }
 
     return {
+      rootSagaStarted: rootSagaStarted,
       effectTriggered: effectTriggered,
       effectResolved: effectResolved,
       effectRejected: effectRejected,
