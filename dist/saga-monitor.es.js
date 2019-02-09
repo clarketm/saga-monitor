@@ -614,9 +614,8 @@ function () {
   return Formatter;
 }();
 
-var DEFAULT_STYLE = "color: black";
-var LABEL_STYLE = "font-weight: bold";
-var EFFECT_TYPE_STYLE = "color: blue";
+var DEFAULT_STYLE = "color: inherit";
+var LABEL_STYLE = "color: inherit";
 var ERROR_STYLE = "color: red";
 var CANCEL_STYLE = "color: #ccc";
 
@@ -628,9 +627,12 @@ function (_Formatter) {
   function DescriptorFormatter(isCancel, isError) {
     var _this;
 
+    var theme = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+
     _classCallCheck(this, DescriptorFormatter);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(DescriptorFormatter).call(this));
+    _this.theme = "color: ".concat(theme);
     _this.logMethod = isError ? "error" : "log";
 
     _this.styleOverride = function (s) {
@@ -657,7 +659,7 @@ function (_Formatter) {
   }, {
     key: "addEffectType",
     value: function addEffectType(text) {
-      return this.add("%c ".concat(text, " "), this.styleOverride(EFFECT_TYPE_STYLE));
+      return this.add("%c ".concat(text, " "), this.styleOverride(this.theme));
     }
   }, {
     key: "addDescResult",
@@ -669,17 +671,17 @@ function (_Formatter) {
 
       if (status === RESOLVED && !ignoreResult) {
         if (array(result)) {
-          this.addValue(" 🡲 ");
+          this.addValue("➡️");
           this.addValue(result);
         } else {
-          this.appendData("🡲", result);
+          this.appendData("➡️", result);
         }
       } else if (status === REJECTED) {
-        this.appendData("🡲 ⚠", error);
+        this.appendData("🛑", error);
       } else if (status === PENDING) {
         this.appendData("⌛");
       } else if (status === CANCELLED) {
-        this.appendData("🡲 Cancelled!");
+        this.appendData("⚠️ Cancelled!");
       }
 
       if (status !== PENDING) {
@@ -693,7 +695,7 @@ function (_Formatter) {
   return DescriptorFormatter;
 }(Formatter);
 
-function logSaga(manager) {
+function logSaga(manager, color) {
   if (manager.getRootIds().length === 0) {
     console.log("Saga monitor: No effects to log");
   }
@@ -707,7 +709,7 @@ function logSaga(manager) {
   try {
     for (var _iterator = manager.getRootIds()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var id = _step.value;
-      logEffectTree(manager, id);
+      logEffectTree(manager, id, color);
     }
   } catch (err) {
     _didIteratorError = true;
@@ -727,10 +729,10 @@ function logSaga(manager) {
   console.log("");
 }
 
-function logEffectTree(manager, effectId) {
+function logEffectTree(manager, effectId, color) {
   var desc = manager.get(effectId);
   var childIds = manager.getChildIds(effectId);
-  var formatter = getFormatterFromDescriptor(desc);
+  var formatter = getFormatterFromDescriptor(desc, color);
 
   if (childIds.length === 0) {
     var _console;
@@ -745,7 +747,7 @@ function logEffectTree(manager, effectId) {
     try {
       for (var _iterator2 = childIds[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var id = _step2.value;
-        logEffectTree(manager, id);
+        logEffectTree(manager, id, color);
       }
     } catch (err) {
       _didIteratorError2 = true;
@@ -766,10 +768,10 @@ function logEffectTree(manager, effectId) {
   }
 }
 
-function getFormatterFromDescriptor(desc) {
+function getFormatterFromDescriptor(desc, color) {
   var isCancel = desc.status === CANCELLED;
   var isError = desc.status === REJECTED;
-  var formatter = new DescriptorFormatter(isCancel, isError);
+  var formatter = new DescriptorFormatter(isCancel, isError, color);
   var winnerInd = desc.winner ? isError ? "✘" : "✓" : "";
   formatter.addLabel(winnerInd).addLabel(desc.label);
 
@@ -878,6 +880,9 @@ function () {
   return Manager;
 }();
 
+var version = "1.0.9";
+
+var LOG_SAGAS_STYLE = "font-weight: bold";
 var globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
 
 function time() {
@@ -973,6 +978,7 @@ function setRaceWinner(raceEffectId, result) {
 var defaultConfig = {
   level: "debug",
   color: "#03A9F4",
+  verbose: true,
   rootSagaStart: false,
   effectTrigger: false,
   effectResolve: false,
@@ -998,7 +1004,10 @@ function createSagaMonitor() {
   var styles = ["color: ".concat(color), "font-weight: bold"].join(";");
 
   function rootSagaStarted(desc) {
-    if (rootSagaStart) console[level]("%c Root saga started:", desc.saga.name || "anonymous", styles, desc.args);
+    if (rootSagaStart) {
+      console[level]("%c Root saga started:", styles, desc.saga.name || "anonymous", desc.args);
+    }
+
     manager.setRootEffect(desc.effectId, Object.assign({}, desc, {
       status: PENDING,
       start: time()
@@ -1041,11 +1050,20 @@ function createSagaMonitor() {
   }
 
   function actionDispatched(action) {
-    if (actionDispatch) console[level]("%c actionDispatched:", styles, action);
+    if (actionDispatch) {
+      console[level]("%c actionDispatched:", styles, action);
+    }
   }
 
-  if (verbose) {
-    console[level]("View Sagas by executing %c $$LogSagas()", styles, "in the console");
+  if (globalScope) {
+    if (verbose) {
+      console[level]("View Sagas by executing %c$$LogSagas()", LOG_SAGAS_STYLE, "in the console");
+    } // Export the snapshot-logging function to run from the browser console or extensions.
+
+
+    globalScope.$$LogSagas = function () {
+      return logSaga(manager, color);
+    };
   }
 
   return {
@@ -1056,14 +1074,11 @@ function createSagaMonitor() {
     effectCancelled: effectCancelled,
     actionDispatched: actionDispatched
   };
-} // Export the snapshot-logging function to run from the browser console or extensions.
+} // Version
 
 
-if (globalScope) {
-  globalScope.$$LogSagas = function () {
-    return logSaga(manager);
-  };
-} // Export the snapshot-logging function for arbitrary use by external code.
+createSagaMonitor.VERSION = version;
+logSaga.VERSION = version; // Export the snapshot-logging function for arbitrary use by external code.
 
 export default createSagaMonitor;
 export { logSaga };
