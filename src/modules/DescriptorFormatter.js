@@ -2,15 +2,15 @@ import * as is from "@redux-saga/is";
 import Formatter from "./Formatter";
 import { CANCELLED, PENDING, REJECTED, RESOLVED } from "./constants";
 
-const DEFAULT_STYLE = "color: black";
-const LABEL_STYLE = "font-weight: bold";
-const EFFECT_TYPE_STYLE = "color: blue";
+const DEFAULT_STYLE = "color: inherit";
+const LABEL_STYLE = "color: inherit";
 const ERROR_STYLE = "color: red";
 const CANCEL_STYLE = "color: #ccc";
 
 export default class DescriptorFormatter extends Formatter {
-  constructor(isCancel, isError) {
+  constructor(isCancel, isError, theme = "") {
     super();
+    this.theme = `color: ${theme}`;
     this.logMethod = isError ? "error" : "log";
     this.styleOverride = s => (isCancel ? CANCEL_STYLE : isError ? ERROR_STYLE : s);
   }
@@ -28,24 +28,24 @@ export default class DescriptorFormatter extends Formatter {
   }
 
   addEffectType(text) {
-    return this.add(`%c ${text} `, this.styleOverride(EFFECT_TYPE_STYLE));
+    return this.add(`%c ${text} `, this.styleOverride(this.theme));
   }
 
   addDescResult(descriptor, ignoreResult) {
     const { status, result, error, duration } = descriptor;
     if (status === RESOLVED && !ignoreResult) {
       if (is.array(result)) {
-        this.addValue(" 🡲 ");
+        this.addValue("➡️");
         this.addValue(result);
       } else {
-        this.appendData("🡲", result);
+        this.appendData("➡️", result);
       }
     } else if (status === REJECTED) {
-      this.appendData("🡲 ⚠", error);
+      this.appendData("🛑", error);
     } else if (status === PENDING) {
       this.appendData("⌛");
     } else if (status === CANCELLED) {
-      this.appendData("🡲 Cancelled!");
+      this.appendData("⚠️ Cancelled!");
     }
     if (status !== PENDING) {
       this.appendData(`(${duration.toFixed(2)}ms)`);

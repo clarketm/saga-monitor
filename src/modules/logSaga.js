@@ -5,39 +5,39 @@ import { consoleGroup, consoleGroupEnd } from "./consoleGroup";
 import { CANCELLED, REJECTED } from "./constants";
 import DescriptorFormatter from "./DescriptorFormatter";
 
-export default function logSaga(manager) {
+export default function logSaga(manager, color) {
   if (manager.getRootIds().length === 0) {
     console.log("Saga monitor: No effects to log");
   }
   console.log("");
   console.log("Saga monitor:", Date.now(), new Date().toISOString());
   for (const id of manager.getRootIds()) {
-    logEffectTree(manager, id);
+    logEffectTree(manager, id, color);
   }
   console.log("");
 }
 
-function logEffectTree(manager, effectId) {
+function logEffectTree(manager, effectId, color) {
   const desc = manager.get(effectId);
   const childIds = manager.getChildIds(effectId);
 
-  const formatter = getFormatterFromDescriptor(desc);
+  const formatter = getFormatterFromDescriptor(desc, color);
   if (childIds.length === 0) {
     console[formatter.logMethod](...formatter.getLog());
   } else {
     consoleGroup(...formatter.getLog());
     for (const id of childIds) {
-      logEffectTree(manager, id);
+      logEffectTree(manager, id, color);
     }
     consoleGroupEnd();
   }
 }
 
-function getFormatterFromDescriptor(desc) {
+function getFormatterFromDescriptor(desc, color) {
   const isCancel = desc.status === CANCELLED;
   const isError = desc.status === REJECTED;
 
-  const formatter = new DescriptorFormatter(isCancel, isError);
+  const formatter = new DescriptorFormatter(isCancel, isError, color);
 
   const winnerInd = desc.winner ? (isError ? "✘" : "✓") : "";
   formatter.addLabel(winnerInd).addLabel(desc.label);
