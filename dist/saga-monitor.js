@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, Travis Clarke
+ * Copyright (c) 2019, Travis Clarke
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -886,7 +886,7 @@
     return Manager;
   }();
 
-  var version = "1.0.9";
+  var version = "2.0.0";
 
   var LOG_SAGAS_STYLE = "font-weight: bold";
   var globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
