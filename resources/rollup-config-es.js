@@ -4,6 +4,7 @@ import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import json from "rollup-plugin-json";
 import stripBanner from "rollup-plugin-strip-banner";
+import resolve from "rollup-plugin-node-resolve";
 
 const copyright = fs.readFileSync(path.join("resources", "COPYRIGHT"), "utf-8");
 
@@ -16,12 +17,8 @@ export default {
     name: "SagaMonitor",
     banner: copyright,
     file: path.join(DIST_DIR, "saga-monitor.es.js"),
-    format: "es",
-    globals: {
-      "redux-saga/utils": "ReduxSaga.utils"
-    }
+    format: "es"
   },
-  external: ["redux-saga/utils"],
   plugins: [
     json(),
     stripBanner(),
@@ -30,6 +27,7 @@ export default {
       exclude: "**/node_modules/**",
       babelrc: false
     }),
+    resolve(),
     commonjs()
   ]
 };
