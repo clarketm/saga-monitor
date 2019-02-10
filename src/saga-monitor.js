@@ -1,6 +1,13 @@
 /* eslint-disable no-console */
 import * as is from "@redux-saga/is";
-import { CANCELLED, IS_BROWSER, PENDING, REJECTED, RESOLVED } from "./modules/constants";
+import {
+  CANCELLED,
+  IS_BROWSER,
+  IS_REACT_NATIVE,
+  PENDING,
+  REJECTED,
+  RESOLVED
+} from "./modules/constants";
 import { isRaceEffect } from "./modules/checkers";
 import logSaga from "./modules/logSaga";
 import Manager from "./modules/Manager";
@@ -8,12 +15,7 @@ import { version } from "../package.json";
 
 const LOG_SAGAS_STYLE = "font-weight: bold";
 
-const globalScope =
-  typeof window.document === "undefined" && navigator.product === "ReactNative"
-    ? global
-    : IS_BROWSER
-    ? window
-    : null;
+const globalScope = IS_BROWSER ? window : IS_REACT_NATIVE ? global : null;
 
 function time() {
   if (typeof performance !== "undefined" && performance.now) {
