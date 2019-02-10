@@ -193,6 +193,7 @@
   var REJECTED = "REJECTED";
   var CANCELLED = "CANCELLED";
   var IS_BROWSER = typeof window !== "undefined" && window.document;
+  var IS_REACT_NATIVE = typeof navigator !== 'undefined' && navigator.product === "ReactNative";
 
   function delayP(ms, val) {
     if (val === void 0) {
@@ -889,7 +890,7 @@
   var version = "2.0.0";
 
   var LOG_SAGAS_STYLE = "font-weight: bold";
-  var globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
+  var globalScope = IS_BROWSER ? window : IS_REACT_NATIVE ? global : null;
 
   function time() {
     if (typeof performance !== "undefined" && performance.now) {
