@@ -41,7 +41,7 @@ function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance");
 }
 
-var version = "1.0.9";
+var version = "1.0.10";
 
 var PENDING = "PENDING";
 var RESOLVED = "RESOLVED";
@@ -53,7 +53,8 @@ var EFFECT_TYPE_STYLE = "color: lightblue";
 var ERROR_STYLE = "color: red";
 var CANCEL_STYLE = "color: #ccc";
 var IS_BROWSER = typeof window !== "undefined" && window.document;
-var globalScope = typeof window.document === "undefined" && navigator.product === "ReactNative" ? global : IS_BROWSER ? window : null;
+var IS_REACT_NATIVE = typeof navigator !== "undefined" && navigator.product === "ReactNative";
+var globalScope = IS_BROWSER ? window : IS_REACT_NATIVE ? global : null;
 var defaultConfig = {
   level: "debug",
   verbose: true,

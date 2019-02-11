@@ -13,13 +13,9 @@ const ERROR_STYLE = "color: red";
 const CANCEL_STYLE = "color: #ccc";
 
 const IS_BROWSER = typeof window !== "undefined" && window.document;
+const IS_REACT_NATIVE = typeof navigator !== "undefined" && navigator.product === "ReactNative";
 
-const globalScope =
-  typeof window.document === "undefined" && navigator.product === "ReactNative"
-    ? global
-    : IS_BROWSER
-      ? window
-      : null;
+const globalScope = IS_BROWSER ? window : IS_REACT_NATIVE ? global : null;
 
 const defaultConfig = {
   level: "debug",
