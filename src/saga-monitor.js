@@ -158,6 +158,10 @@ function createSagaMonitor(options = {}) {
 
   function effectCancelled(effectId) {
     if (effectCancel) {
+      const effect = manager.get(effectId)?.effect;
+      const effectFunction = effect?.payload?.fn?.name;
+      const effectArgs = effect?.payload?.args;
+      
       console[level]("%c effectCancelled:", styles, effectId);
     }
     cancelEffect(effectId);
