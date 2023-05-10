@@ -1050,6 +1050,9 @@
 
     function effectCancelled(effectId) {
       if (effectCancel) {
+        var effect$$1 = manager.get(effectId).effect;
+        var effectFunction = effect$$1.payload.fn.name;
+        var effectArgs = effect$$1.payload.args;
         console[level]("%c effectCancelled:", styles, effectId);
       }
 
